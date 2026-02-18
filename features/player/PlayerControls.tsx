@@ -8,7 +8,7 @@ const SPACEBAR_KEY = " "
 
 function PlayIcon() {
   return (
-    <svg className="size-4 ml-0.5" fill="currentColor" viewBox="0 0 24 24">
+    <svg className="ml-0.5 size-4" fill="currentColor" viewBox="0 0 24 24">
       <path d="M8 5v14l11-7z" />
     </svg>
   )
@@ -123,10 +123,11 @@ export function PlayerControls() {
       {/* Auto-play toggle */}
       <button
         onClick={toggleAutoPlay}
-        className={`hidden items-center justify-center rounded-full p-1.5 transition-all sm:flex ${isAutoPlay
+        className={`hidden items-center justify-center rounded-full p-1.5 transition-all sm:flex ${
+          isAutoPlay
             ? "bg-blue-100 text-blue-600 shadow-sm shadow-blue-500/10 dark:bg-blue-900/50 dark:text-blue-400"
             : "text-gray-400 hover:bg-gray-100 hover:text-gray-600 dark:hover:bg-gray-700 dark:hover:text-gray-300"
-          }`}
+        }`}
         aria-label={isAutoPlay ? "Disable auto-play" : "Enable auto-play"}
         aria-pressed={isAutoPlay}
       >

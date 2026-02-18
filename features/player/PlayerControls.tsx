@@ -6,6 +6,35 @@ import { usePlayer } from "./usePlayer"
 
 const SPACEBAR_KEY = " "
 
+function PlayIcon({ className }: { className?: string }) {
+  return (
+    <svg className={className} fill="currentColor" viewBox="0 0 24 24">
+      <path d="M8 5v14l11-7z" />
+    </svg>
+  )
+}
+
+function PauseIcon({ className }: { className?: string }) {
+  return (
+    <svg className={className} fill="currentColor" viewBox="0 0 24 24">
+      <path d="M6 19h4V5H6v14zm8-14v14h4V5h-4z" />
+    </svg>
+  )
+}
+
+function NextIcon({ className }: { className?: string }) {
+  return (
+    <svg className={className} fill="currentColor" viewBox="0 0 24 24">
+      <path d="M6 18l8.5-6L6 6v12zm2-8.14L11.03 12 8 14.14V9.86zM16 6h2v12h-2z" />
+    </svg>
+  )
+}
+
+const controlButton =
+  "flex items-center justify-center rounded-full transition-all duration-150 active:scale-95 " +
+  "size-9 bg-gray-100 text-gray-700 hover:bg-blue-100 hover:text-blue-600 hover:shadow-md " +
+  "dark:bg-gray-700 dark:text-gray-200 dark:hover:bg-blue-900 dark:hover:text-blue-300"
+
 export function PlayerControls() {
   const { isPlaying, volume, isAutoPlay, togglePlay, playNext, setVolume, toggleAutoPlay } = usePlayer()
 
@@ -36,17 +65,17 @@ export function PlayerControls() {
     <div className="flex shrink-0 items-center gap-2 sm:gap-3">
       <button
         onClick={togglePlay}
-        className="rounded-md bg-gray-100 px-3 py-1.5 text-sm font-medium text-gray-800 transition-colors hover:bg-gray-200 dark:bg-gray-700 dark:text-gray-200 dark:hover:bg-gray-600"
+        className={controlButton}
         aria-label={isPlaying ? "Pause" : "Play"}
       >
-        {isPlaying ? "Pause" : "Play"}
+        {isPlaying ? <PauseIcon className="size-5" /> : <PlayIcon className="size-5" />}
       </button>
       <button
         onClick={playNext}
-        className="rounded-md bg-gray-100 px-3 py-1.5 text-sm font-medium text-gray-800 transition-colors hover:bg-gray-200 dark:bg-gray-700 dark:text-gray-200 dark:hover:bg-gray-600"
+        className={controlButton}
         aria-label="Next song"
       >
-        Next
+        <NextIcon className="size-5" />
       </button>
       <label className="hidden items-center gap-1.5 sm:flex">
         <span className="text-xs text-gray-500 dark:text-gray-400">Vol</span>
@@ -63,10 +92,10 @@ export function PlayerControls() {
       </label>
       <button
         onClick={toggleAutoPlay}
-        className={`hidden rounded-md px-2 py-1 text-xs font-medium transition-colors sm:block ${
+        className={`hidden rounded-full px-2.5 py-1 text-xs font-medium transition-all duration-150 sm:block ${
           isAutoPlay
-            ? "bg-blue-100 text-blue-700 dark:bg-blue-900 dark:text-blue-300"
-            : "bg-gray-100 text-gray-500 dark:bg-gray-700 dark:text-gray-400"
+            ? "bg-blue-100 text-blue-700 hover:bg-blue-200 dark:bg-blue-900 dark:text-blue-300 dark:hover:bg-blue-800"
+            : "bg-gray-100 text-gray-500 hover:bg-gray-200 dark:bg-gray-700 dark:text-gray-400 dark:hover:bg-gray-600"
         }`}
         aria-label={isAutoPlay ? "Disable auto-play" : "Enable auto-play"}
         aria-pressed={isAutoPlay}

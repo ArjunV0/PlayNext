@@ -24,7 +24,7 @@ const AUTH_ERRORS: Record<string, string> = {
 type AuthView = "sign-in" | "sign-up" | "magic-link-sent" | "reset-password" | "reset-sent" | "confirm-email"
 
 const cardClass = twMerge(
-  "w-full max-w-sm space-y-6 rounded-2xl p-8 shadow-xl",
+  "w-full max-w-sm space-y-4 rounded-2xl p-5 shadow-xl sm:space-y-6 sm:p-8",
   "border border-white/20 bg-white/70 backdrop-blur-xl",
   "dark:border-gray-700/50 dark:bg-gray-800/70"
 )

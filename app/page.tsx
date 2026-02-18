@@ -2,7 +2,7 @@
 
 import { useCallback, useEffect, useRef, useState } from "react"
 
-import { SECTION_TERMS } from "features/home/albums.constants"
+import { SECTIONS } from "features/home/albums.constants"
 import { SongSection } from "features/home/AlbumSection"
 import { fetchSongs } from "features/home/itunes"
 import { SongModal } from "features/home/SongModal"
@@ -28,9 +28,9 @@ export default function HomePage() {
     async function loadSongs() {
       try {
         const [sfy, tg, ti] = await Promise.all([
-          fetchSongs(SECTION_TERMS.SELECTED_FOR_YOU, 6, controller.signal),
-          fetchSongs(SECTION_TERMS.TOP_HITS_GLOBAL, 6, controller.signal),
-          fetchSongs(SECTION_TERMS.TOP_HITS_INDIA, 6, controller.signal),
+          fetchSongs(SECTIONS.SELECTED_FOR_YOU, 6, controller.signal),
+          fetchSongs(SECTIONS.TOP_HITS_GLOBAL, 6, controller.signal),
+          fetchSongs(SECTIONS.TOP_HITS_INDIA, 6, controller.signal),
         ])
         setSelectedForYou(sfy)
         setTopGlobal(tg)

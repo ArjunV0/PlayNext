@@ -1,5 +1,10 @@
-export const SECTION_TERMS = {
-  SELECTED_FOR_YOU: "pop hits 2024",
-  TOP_HITS_GLOBAL: "global top hits 2024",
-  TOP_HITS_INDIA: "bollywood hits 2024",
+export interface SectionConfig {
+  term: string
+  country?: string
+}
+
+export const SECTIONS: Record<string, SectionConfig> = {
+  SELECTED_FOR_YOU: { term: "pop hits 2024" },
+  TOP_HITS_GLOBAL: { term: "global top hits 2024" },
+  TOP_HITS_INDIA: { term: "bollywood top songs", country: "in" },
 } as const

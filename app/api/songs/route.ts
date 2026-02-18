@@ -5,6 +5,7 @@ import { z } from "zod"
 const songsSchema = z.object({
   term: z.string().min(1).max(100),
   limit: z.coerce.number().min(1).max(20).default(6),
+  country: z.string().length(2).optional(),
 })
 
 interface ITunesResult {
@@ -33,6 +34,9 @@ export async function GET(request: NextRequest): Promise<Response> {
     media: "music",
     limit: String(parsed.data.limit),
   })
+  if (parsed.data.country) {
+    searchParams.set("country", parsed.data.country)
+  }
 
   const response = await fetch(`https://itunes.apple.com/search?${searchParams.toString()}`)
   if (!response.ok) {

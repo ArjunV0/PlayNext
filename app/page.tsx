@@ -1,12 +1,11 @@
 "use client"
 
-import { useCallback, useEffect, useRef, useState } from "react"
+import { useCallback, useEffect, useState } from "react"
 
 import { UserMenu } from "features/auth/UserMenu"
 import { SECTIONS } from "features/home/albums.constants"
 import { SongSection } from "features/home/AlbumSection"
 import { fetchSongs } from "features/home/itunes"
-import { SongModal } from "features/home/SongModal"
 import { PlayerBar } from "features/player/PlayerBar"
 import type { Song } from "features/player/PlayerContext"
 import { usePlayer } from "features/player/usePlayer"
@@ -19,8 +18,6 @@ export default function HomePage() {
   const [topGlobal, setTopGlobal] = useState<Song[]>([])
   const [topIndia, setTopIndia] = useState<Song[]>([])
   const [isLoading, setIsLoading] = useState(true)
-  const [modalSong, setModalSong] = useState<Song | null>(null)
-  const pendingQueueRef = useRef<Song[]>([])
 
   useEffect(() => {
     const controller = new AbortController()
@@ -48,27 +45,15 @@ export default function HomePage() {
   }, [])
 
   const handleSongClick = useCallback((song: Song, queue: Song[]) => {
-    setModalSong(song)
-    pendingQueueRef.current = queue
-  }, [])
-
-  const handleModalPlay = useCallback(() => {
-    if (modalSong) {
-      playSong(modalSong, pendingQueueRef.current)
-      setModalSong(null)
-    }
-  }, [modalSong, playSong])
-
-  const handleModalClose = useCallback(() => {
-    setModalSong(null)
-  }, [])
+    playSong(song, queue)
+  }, [playSong])
 
   return (
     <>
       <header className="sticky top-0 z-10 border-b border-white/20 bg-white/60 backdrop-blur-xl dark:border-gray-700/50 dark:bg-gray-900/60">
         <div className="mx-auto max-w-screen-xl px-4 py-3">
           <div className="flex items-center gap-3">
-            <h1 className="shrink-0 text-lg font-bold text-gray-900 dark:text-white">PlayNext</h1>
+            <h1 className="shrink-0 text-lg font-bold text-gradient">PlayNext</h1>
             <div className="hidden flex-1 sm:block">
               <SearchInput />
             </div>
@@ -91,7 +76,6 @@ export default function HomePage() {
         <SongSection title="Top Hits Global" songs={topGlobal} isLoading={isLoading} onSongClick={handleSongClick} />
         <SongSection title="Top Hits India" songs={topIndia} isLoading={isLoading} onSongClick={handleSongClick} />
       </main>
-      <SongModal song={modalSong} onPlay={handleModalPlay} onClose={handleModalClose} />
       <PlayerBar />
     </>
   )

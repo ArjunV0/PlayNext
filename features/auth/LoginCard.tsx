@@ -1,11 +1,18 @@
 "use client"
 
-import { use, useActionState, useState } from "react"
+import { use, useState, useTransition } from "react"
+import { useRouter } from "next/navigation"
 
 import { cva } from "class-variance-authority"
 import { twMerge } from "tailwind-merge"
 
-import { signInWithGoogle, signInWithMagicLink } from "./actions"
+import {
+  signInWithGoogle,
+  signInWithMagicLink,
+  signInWithPassword,
+  signUpWithPassword,
+  resetPassword,
+} from "./actions"
 
 import { APP_NAME } from "lib/constants"
 
@@ -13,6 +20,8 @@ const AUTH_ERRORS: Record<string, string> = {
   auth_callback_failed: "Authentication failed. Please try again.",
   oauth_failed: "Could not connect to Google. Please try again.",
 }
+
+type AuthView = "sign-in" | "sign-up" | "magic-link-sent" | "reset-password" | "reset-sent" | "confirm-email"
 
 const button = cva(
   [
@@ -30,7 +39,7 @@ const button = cva(
           "dark:border-gray-600 dark:bg-gray-800 dark:text-gray-200",
           "dark:hover:bg-gray-700",
         ],
-        magic: [
+        primary: [
           "bg-blue-600 text-white",
           "hover:bg-blue-700",
           "dark:bg-blue-500 dark:hover:bg-blue-600",
@@ -38,6 +47,14 @@ const button = cva(
       },
     },
   }
+)
+
+const inputClass = twMerge(
+  "w-full rounded-lg border border-gray-300 bg-white px-4 py-3",
+  "text-sm text-gray-900 placeholder-gray-400",
+  "focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500",
+  "dark:border-gray-600 dark:bg-gray-800 dark:text-white dark:placeholder-gray-500",
+  "dark:focus:border-blue-400 dark:focus:ring-blue-400"
 )
 
 function GoogleIcon() {
@@ -63,6 +80,16 @@ function GoogleIcon() {
   )
 }
 
+function Divider() {
+  return (
+    <div className="flex items-center gap-3">
+      <div className="h-px flex-1 bg-gray-200 dark:bg-gray-700" />
+      <span className="text-xs text-gray-400 dark:text-gray-500">or</span>
+      <div className="h-px flex-1 bg-gray-200 dark:bg-gray-700" />
+    </div>
+  )
+}
+
 interface LoginCardProps {
   searchParams: Promise<Record<string, string | undefined>>
 }
@@ -72,27 +99,84 @@ export function LoginCard({ searchParams }: LoginCardProps) {
   const errorCode = params.error
   const redirectTo = params.next
 
-  const [magicLinkSent, setMagicLinkSent] = useState(false)
-  const [isGoogleLoading, setIsGoogleLoading] = useState(false)
+  const router = useRouter()
+  const [view, setView] = useState<AuthView>("sign-in")
+  const [email, setEmail] = useState("")
+  const [password, setPassword] = useState("")
+  const [error, setError] = useState<string | null>(null)
 
-  const [magicLinkState, magicLinkAction, isMagicLinkPending] = useActionState(
-    async (_prev: { error: string | null }, formData: FormData) => {
-      const email = formData.get("email") as string
-      const result = await signInWithMagicLink(email, redirectTo)
-      if (!result.error) setMagicLinkSent(true)
-      return result
-    },
-    { error: null }
-  )
+  const [isGoogleLoading, setIsGoogleLoading] = useState(false)
+  const [isSubmitting, startTransition] = useTransition()
+  const [isMagicLinkPending, startMagicLink] = useTransition()
+  const [isResetPending, startReset] = useTransition()
 
   async function handleGoogleSignIn() {
     setIsGoogleLoading(true)
     await signInWithGoogle(redirectTo)
   }
 
-  const errorMessage = errorCode ? AUTH_ERRORS[errorCode] : magicLinkState.error
+  function handlePasswordSubmit(e: React.FormEvent) {
+    e.preventDefault()
+    setError(null)
 
-  if (magicLinkSent) {
+    startTransition(async () => {
+      if (view === "sign-up") {
+        const result = await signUpWithPassword(email, password, redirectTo)
+        if (result.needsConfirmation) {
+          setView("confirm-email")
+          return
+        }
+        if (result.error) {
+          setError(result.error)
+          return
+        }
+      } else {
+        const result = await signInWithPassword(email, password)
+        if (result.error) {
+          setError(result.error)
+          return
+        }
+      }
+      router.push(redirectTo ?? "/")
+      router.refresh()
+    })
+  }
+
+  function handleMagicLink() {
+    if (!email) {
+      setError("Enter your email address first.")
+      return
+    }
+    setError(null)
+
+    startMagicLink(async () => {
+      const result = await signInWithMagicLink(email, redirectTo)
+      if (result.error) {
+        setError(result.error)
+      } else {
+        setView("magic-link-sent")
+      }
+    })
+  }
+
+  function handleResetSubmit(e: React.FormEvent) {
+    e.preventDefault()
+    setError(null)
+
+    startReset(async () => {
+      const result = await resetPassword(email, redirectTo)
+      if (result.error) {
+        setError(result.error)
+      } else {
+        setView("reset-sent")
+      }
+    })
+  }
+
+  const errorMessage = errorCode ? AUTH_ERRORS[errorCode] : error
+
+  // Confirmation screens
+  if (view === "magic-link-sent") {
     return (
       <div className="w-full max-w-sm space-y-6 rounded-xl border border-gray-200 bg-white p-8 shadow-sm dark:border-gray-700 dark:bg-gray-800">
         <div className="text-center">
@@ -103,7 +187,7 @@ export function LoginCard({ searchParams }: LoginCardProps) {
         </div>
         <button
           type="button"
-          onClick={() => setMagicLinkSent(false)}
+          onClick={() => { setError(null); setView("sign-in") }}
           className="w-full text-center text-sm text-blue-600 hover:underline dark:text-blue-400"
         >
           Back to sign in
@@ -112,11 +196,102 @@ export function LoginCard({ searchParams }: LoginCardProps) {
     )
   }
 
+  if (view === "confirm-email") {
+    return (
+      <div className="w-full max-w-sm space-y-6 rounded-xl border border-gray-200 bg-white p-8 shadow-sm dark:border-gray-700 dark:bg-gray-800">
+        <div className="text-center">
+          <h1 className="text-2xl font-bold text-gray-900 dark:text-white">Confirm your email</h1>
+          <p className="mt-2 text-sm text-gray-500 dark:text-gray-400">
+            We sent a confirmation link to your email. Click it to activate your account, then sign in.
+          </p>
+        </div>
+        <button
+          type="button"
+          onClick={() => { setError(null); setView("sign-in") }}
+          className="w-full text-center text-sm text-blue-600 hover:underline dark:text-blue-400"
+        >
+          Back to sign in
+        </button>
+      </div>
+    )
+  }
+
+  if (view === "reset-sent") {
+    return (
+      <div className="w-full max-w-sm space-y-6 rounded-xl border border-gray-200 bg-white p-8 shadow-sm dark:border-gray-700 dark:bg-gray-800">
+        <div className="text-center">
+          <h1 className="text-2xl font-bold text-gray-900 dark:text-white">Check your email</h1>
+          <p className="mt-2 text-sm text-gray-500 dark:text-gray-400">
+            We sent a password reset link to your email. Click it to set a new password.
+          </p>
+        </div>
+        <button
+          type="button"
+          onClick={() => { setError(null); setView("sign-in") }}
+          className="w-full text-center text-sm text-blue-600 hover:underline dark:text-blue-400"
+        >
+          Back to sign in
+        </button>
+      </div>
+    )
+  }
+
+  // Reset password form
+  if (view === "reset-password") {
+    return (
+      <div className="w-full max-w-sm space-y-6 rounded-xl border border-gray-200 bg-white p-8 shadow-sm dark:border-gray-700 dark:bg-gray-800">
+        <div className="text-center">
+          <h1 className="text-2xl font-bold text-gray-900 dark:text-white">Reset password</h1>
+          <p className="mt-2 text-sm text-gray-500 dark:text-gray-400">
+            Enter your email and we&apos;ll send you a reset link.
+          </p>
+        </div>
+
+        {errorMessage && (
+          <div className="rounded-lg bg-red-50 px-4 py-3 text-sm text-red-700 dark:bg-red-900/30 dark:text-red-400">
+            {errorMessage}
+          </div>
+        )}
+
+        <form onSubmit={handleResetSubmit} className="space-y-3">
+          <input
+            type="email"
+            required
+            placeholder="Email address"
+            value={email}
+            onChange={(e) => setEmail(e.target.value)}
+            className={inputClass}
+          />
+          <button
+            type="submit"
+            disabled={isResetPending}
+            className={twMerge(button({ variant: "primary" }))}
+          >
+            {isResetPending ? "Sending..." : "Send reset link"}
+          </button>
+        </form>
+
+        <button
+          type="button"
+          onClick={() => { setError(null); setView("sign-in") }}
+          className="w-full text-center text-sm text-blue-600 hover:underline dark:text-blue-400"
+        >
+          Back to sign in
+        </button>
+      </div>
+    )
+  }
+
+  // Main sign-in / sign-up form
+  const isSignUp = view === "sign-up"
+
   return (
     <div className="w-full max-w-sm space-y-6 rounded-xl border border-gray-200 bg-white p-8 shadow-sm dark:border-gray-700 dark:bg-gray-800">
       <div className="text-center">
         <h1 className="text-2xl font-bold text-gray-900 dark:text-white">{APP_NAME}</h1>
-        <p className="mt-2 text-sm text-gray-500 dark:text-gray-400">Sign in to continue</p>
+        <p className="mt-2 text-sm text-gray-500 dark:text-gray-400">
+          {isSignUp ? "Create an account" : "Sign in to continue"}
+        </p>
       </div>
 
       {errorMessage && (
@@ -135,34 +310,67 @@ export function LoginCard({ searchParams }: LoginCardProps) {
         {isGoogleLoading ? "Redirecting..." : "Continue with Google"}
       </button>
 
-      <div className="flex items-center gap-3">
-        <div className="h-px flex-1 bg-gray-200 dark:bg-gray-700" />
-        <span className="text-xs text-gray-400 dark:text-gray-500">or</span>
-        <div className="h-px flex-1 bg-gray-200 dark:bg-gray-700" />
-      </div>
+      <Divider />
 
-      <form action={magicLinkAction} className="space-y-3">
+      <form onSubmit={handlePasswordSubmit} className="space-y-3">
         <input
           type="email"
-          name="email"
           required
           placeholder="Email address"
-          className={twMerge(
-            "w-full rounded-lg border border-gray-300 bg-white px-4 py-3",
-            "text-sm text-gray-900 placeholder-gray-400",
-            "focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500",
-            "dark:border-gray-600 dark:bg-gray-800 dark:text-white dark:placeholder-gray-500",
-            "dark:focus:border-blue-400 dark:focus:ring-blue-400"
-          )}
+          value={email}
+          onChange={(e) => setEmail(e.target.value)}
+          className={inputClass}
+        />
+        <input
+          type="password"
+          required
+          minLength={6}
+          placeholder="Password"
+          value={password}
+          onChange={(e) => setPassword(e.target.value)}
+          className={inputClass}
         />
         <button
           type="submit"
-          disabled={isMagicLinkPending}
-          className={twMerge(button({ variant: "magic" }))}
+          disabled={isSubmitting}
+          className={twMerge(button({ variant: "primary" }))}
         >
-          {isMagicLinkPending ? "Sending..." : "Send magic link"}
+          {isSubmitting
+            ? (isSignUp ? "Creating account..." : "Signing in...")
+            : (isSignUp ? "Create account" : "Sign in")}
         </button>
       </form>
+
+      {!isSignUp && (
+        <div className="flex items-center justify-between text-sm">
+          <button
+            type="button"
+            onClick={() => { setError(null); setView("reset-password") }}
+            className="text-gray-500 hover:underline dark:text-gray-400"
+          >
+            Forgot password?
+          </button>
+          <button
+            type="button"
+            onClick={handleMagicLink}
+            disabled={isMagicLinkPending}
+            className="text-blue-600 hover:underline dark:text-blue-400"
+          >
+            {isMagicLinkPending ? "Sending..." : "Send magic link"}
+          </button>
+        </div>
+      )}
+
+      <p className="text-center text-sm text-gray-500 dark:text-gray-400">
+        {isSignUp ? "Already have an account?" : "Don't have an account?"}{" "}
+        <button
+          type="button"
+          onClick={() => { setError(null); setView(isSignUp ? "sign-in" : "sign-up") }}
+          className="text-blue-600 hover:underline dark:text-blue-400"
+        >
+          {isSignUp ? "Sign in" : "Sign up"}
+        </button>
+      </p>
     </div>
   )
 }

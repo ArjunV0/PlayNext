@@ -2,6 +2,7 @@
 
 import { useCallback, useEffect, useRef, useState } from "react"
 
+import { UserMenu } from "features/auth/UserMenu"
 import { SECTIONS } from "features/home/albums.constants"
 import { SongSection } from "features/home/AlbumSection"
 import { fetchSongs } from "features/home/itunes"
@@ -72,6 +73,7 @@ export default function HomePage() {
             <SearchInput />
           </div>
           <ToggleSwitch />
+          <UserMenu />
         </div>
       </header>
       <main className="mx-auto max-w-screen-xl px-4 py-8 pb-24">

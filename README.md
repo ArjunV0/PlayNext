@@ -1,105 +1,134 @@
+# PlayNext
 
-# [Next.js Enterprise Boilerplate](https://blazity.com/open-source/nextjs-enterprise-boilerplate) 
+A minimal music preview web app built with Next.js 15 and the iTunes Search API.
 
-A production-ready template for building enterprise applications with Next.js. This boilerplate provides a solid foundation with carefully selected technologies and ready-to-go infrastructure to help you develop high-quality applications efficiently.
+## What it does
 
-## Motivation
+PlayNext lets you browse curated song sections, search for music, and play 30-second iTunes previews — all in a clean, responsive interface with dark mode support.
 
-While most Next.js boilerplates focus on individual developer needs with excessive complexity, **next-enterprise** prioritizes strategic simplicity for enterprise teams. It offers a streamlined foundation with high-impact features that maximize developer productivity and accelerate time-to-market for business-critical applications.
+### Features
 
-<a href="https://blazity.com/">
-<picture>
-  <source media="(prefers-color-scheme: dark)" srcset="/assets/blazity-logo-dark.svg">
-  <source media="(prefers-color-scheme: light)" srcset="/assets/blazity-logo-light.svg">
-  <img alt="Logo" align="right" height="80" src="/assets/blazity-logo-light.svg">
-</picture>
-</a>
+- **Home Sections** — Three curated sections on load: Selected For You, Top Hits Global, and Top Hits India (powered by iTunes Search API)
+- **Song Cards** — Album artwork, title, and artist displayed in a responsive grid (2/3/6 columns) with skeleton loading
+- **Song Modal** — Click any card to see a detail modal with Play and Close actions
+- **Audio Player** — Fixed bottom bar with play/pause, next, volume slider, progress bar with seek, and auto-play toggle with queue looping
+- **Search** — Debounced iTunes search with recent search history (persisted in localStorage) and recommended songs fallback
+- **Dark Mode** — System-detected theme with manual toggle, persisted preference, no hydration flicker
+- **Keyboard Controls** — Spacebar toggles play/pause, Escape closes modals
 
-> [!NOTE]
-> **Blazity** is a group of Next.js architects. We help organizations architect, optimize, and deploy high-performance Next.js applications at scale. Contact us at [contact@blazity.com](https://blazity.com) if you’d like to talk about your project.
+## Tech Stack
 
+- [Next.js 15](https://nextjs.org/) (App Router, Turbopack)
+- [React 19](https://react.dev/)
+- [TypeScript](https://www.typescriptlang.org/) (strict mode)
+- [Tailwind CSS v4](https://tailwindcss.com/)
+- [Zod](https://zod.dev/) for API validation
+- [Radix UI](https://www.radix-ui.com/) primitives
+- [Vitest](https://vitest.dev/) + [React Testing Library](https://testing-library.com/) + [Playwright](https://playwright.dev/)
+- [Storybook](https://storybook.js.org/)
+- [ESLint 9](https://eslint.org/) + [Prettier](https://prettier.io/)
+- [Semantic Release](https://semantic-release.gitbook.io/) for automated versioning and changelog
 
+## Project Structure
 
-## Documentation
+```
+app/
+  page.tsx              # Home page (client component)
+  layout.tsx            # Root layout with providers
+  api/
+    songs/route.ts      # iTunes proxy — fetches and maps song data
+    search/route.ts     # iTunes search endpoint with Zod validation
+    health/route.ts     # Health check
 
-There is a separate documentation that explains its functionality, highlights core business values and technical decisions, provides guidelines for future development, and includes architectural diagrams.
+features/
+  home/
+    AlbumSection.tsx    # Section grid with skeleton loading
+    AlbumCard.tsx       # Individual song card
+    SongModal.tsx       # Detail modal for selected song
+    albums.constants.ts # Search terms and country codes for home sections
+    itunes.ts           # Client-side fetch helper
 
-We encourage you to [visit our docs (docs.blazity.com)](https://docs.blazity.com) to learn more
+  player/
+    PlayerContext.tsx    # Audio playback state (Context API)
+    PlayerBar.tsx       # Fixed bottom player UI
+    PlayerControls.tsx  # Play/pause, next, volume, auto-play
+    PlayerProgress.tsx  # Seekable progress bar with time display
+    usePlayer.ts        # Hook for consuming player context
 
-## Integrated features
+  search/
+    SearchProvider.tsx  # Search state with debounce and recent history
+    SearchInput.tsx     # Search bar with recent searches chips
+    SearchResults.tsx   # Results list with recommended fallback
+    useSearch.ts        # Hook for consuming search context
+    types.ts            # Song type and constants
 
-### Boilerplate
-With this template you will get all the boilerplate features included:
+  theme/
+    ThemeProvider.tsx   # Dark/light mode with system detection
+    ToggleSwitch.tsx    # Theme toggle button
+    useTheme.ts        # Hook for consuming theme context
 
-* [Next.js 15](https://nextjs.org/) - Performance-optimized configuration using App Directory
-* [Tailwind CSS v4](https://tailwindcss.com/) - Utility-first CSS framework for efficient UI development
-* [ESlint 9](https://eslint.org/) and [Prettier](https://prettier.io/) - Code consistency and error prevention
-* [Corepack](https://github.com/nodejs/corepack) & [pnpm](https://pnpm.io/) as the package manager - For project management without compromises 
-* [Strict TypeScript](https://www.typescriptlang.org/) - Enhanced type safety with carefully crafted config and [ts-reset](https://github.com/total-typescript/ts-reset) library
-* [GitHub Actions](https://github.com/features/actions) - Pre-configured workflows including bundle size and performance tracking
-* Perfect Lighthouse score - Optimized performance metrics
-* [Bundle analyzer](https://www.npmjs.com/package/@next/bundle-analyzer) - Monitor and manage bundle size during development
-* Testing suite - [Vitest](https://vitest.dev), [React Testing Library](https://testing-library.com/react), and [Playwright](https://playwright.dev/) for comprehensive testing
-* [Storybook](https://storybook.js.org/) - Component development and documentation
-* Advanced testing - Smoke and acceptance testing capabilities
-* [Conventional commits](https://www.conventionalcommits.org/) - Standardized commit history management
-* [Observability](https://opentelemetry.io/) - Open Telemetry integration
-* [Absolute imports](https://nextjs.org/docs/advanced-features/module-path-aliases) - Simplified import structure
-* [Health checks](https://kubernetes.io/docs/tasks/configure-pod-container/configure-liveness-readiness-startup-probes/) - Kubernetes-compatible monitoring
-* [Radix UI](https://www.radix-ui.com/) - Headless components for customization
-* [CVA](http://cva.style/) (Class Variance Authority) - Consistent design system creation
-* [Renovate BOT](https://www.whitesourcesoftware.com/free-developer-tools/renovate) - Automated dependency and security updates
-* [Patch-package](https://www.npmjs.com/package/patch-package) - External dependency fixes without compromises
-* Component relationship tools - Graph for managing coupling and cohesion
-* [Semantic Release](https://github.com/semantic-release/semantic-release) - Automated changelog generation
-* [T3 Env](https://env.t3.gg/) - Streamlined environment variable management
+components/
+  Button/             # Reusable button with Storybook stories and tests
+  Tooltip/            # Tooltip component
+```
 
-### Infrastructure & deployments
+## Getting Started
 
-#### Vercel
+```bash
+pnpm install
+pnpm dev
+```
 
-Easily deploy your Next.js app with [Vercel](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=github&utm_campaign=next-enterprise) by clicking the button below:
+Open [http://localhost:3000](http://localhost:3000).
 
-[![Vercel](https://vercel.com/button)](https://vercel.com/new/git/external?repository-url=https://github.com/Blazity/next-enterprise)
+## Scripts
 
-#### Custom cloud infrastructure
+| Command | Description |
+|---|---|
+| `pnpm dev` | Start dev server with Turbopack |
+| `pnpm build` | Production build |
+| `pnpm start` | Start production server |
+| `pnpm test` | Run unit tests (Vitest) |
+| `pnpm test:watch` | Run tests in watch mode |
+| `pnpm test:coverage` | Run tests with coverage |
+| `pnpm e2e:headless` | Run Playwright E2E tests |
+| `pnpm e2e:ui` | Run Playwright in UI mode |
+| `pnpm lint` | Lint with ESLint |
+| `pnpm format` | Format with Prettier |
+| `pnpm storybook` | Start Storybook on port 6006 |
+| `pnpm analyze` | Analyze bundle size |
 
-**next-enterprise** offers dedicated infrastructure as code (IaC) solutions built with Terraform, designed specifically for deploying Next.js applications based on our extensive experience working with enterprise clients.
+## API Routes
 
-Learn more in our [documentation (docs.blazity.com)][docs] how to quickstart with the deployments using simple CLI.
+### `GET /api/songs?term=<query>&limit=<n>&country=<code>`
 
-#### Available cloud providers and theirs features:
+Proxies the iTunes Search API. Returns mapped song objects with 300×300 artwork and preview URLs. Supports optional country code for regional results. Validated with Zod.
 
-* **AWS (Amazon Web Services)**
-  * Automated provisioning of AWS infrastructure
-  * Scalable & secure setup using:
-     * VPC - Isolated network infrastructure
-     * Elastic Container Service (ECS) - Container orchestration
-     * Elastic Container Registry (ECR) - Container image storage
-     * Application Load Balancer - Traffic distribution
-     * S3 + CloudFront - Static asset delivery and caching
-     * AWS WAF - Web Application Firewall protection
-     * Redis Cluster - Caching
-  * CI/CD ready - Continuous integration and deployment pipeline
+### `GET /api/search?q=<query>`
 
-*... more coming soon*
+Searches iTunes for music by query string. Returns up to 10 results with artwork, preview URLs, and duration. Validated with Zod.
 
-### Team & maintenance
+### `GET /api/health`
 
-**next-enterprise** is backed and maintained by [Blazity](https://blazity.com), providing up to date security features and integrated feature updates.
+Health check endpoint. Also available at `/healthz`, `/health`, and `/ping`.
 
-#### Active maintainers
+## Architecture Decisions
 
-- Igor Klepacki ([neg4n](https://github.com/neg4n)) - Open Source Software Developer
-- Tomasz Czechowski ([tomaszczechowski](https://github.com/tomaszczechowski)) - Solutions Architect & DevOps
-- Jakub Jabłoński ([jjablonski-it](https://github.com/jjablonski-it)) - Head of Integrations
+- **React Context** for state management (player, search, theme) — no external state libraries
+- **Server-side API proxy** — all iTunes API calls go through Next.js API routes, never directly from the client
+- **Feature-based folder structure** — each feature is self-contained under `features/`
+- **Conventional Commits** — commit messages follow the [Conventional Commits](https://www.conventionalcommits.org/) spec to drive Semantic Release
 
-#### All-time contributors
-[bmstefanski](https://github.com/bmstefanski)
+## CI/CD
+
+GitHub Actions workflows handle:
+
+- **check.yml** — Lint, format, unit tests, and Storybook tests on every push
+- **playwright.yml** — E2E tests across Chromium, Firefox, and WebKit
+- **nextjs_bundle_analysis.yml** — Bundle size tracking
+
+Releases are automated via Semantic Release from `main`.
 
 ## License
 
 MIT
-
-
-[docs]: https://docs.blazity.com/next-enterprise/deployments/enterprise-cli

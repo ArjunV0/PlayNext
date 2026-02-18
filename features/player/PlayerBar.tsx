@@ -11,7 +11,7 @@ export function PlayerBar() {
 
   return (
     <div className="fixed right-0 bottom-0 left-0 border-t border-white/20 bg-white/60 backdrop-blur-xl dark:border-gray-700/50 dark:bg-gray-900/60">
-      <div className="mx-auto max-w-screen-lg px-4 pt-2 pb-3">
+      <div className="mx-auto max-w-screen-lg px-3 pt-2 pb-3 sm:px-4">
         <PlayerProgress />
         <div className="mt-2 flex items-center justify-between">
           <div className="flex min-w-0 flex-1 items-center gap-3">

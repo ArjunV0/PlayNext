@@ -36,7 +36,7 @@ export function SongModal({ song, onPlay, onClose }: SongModalProps) {
       aria-modal="true"
       aria-label={`Now playing ${song.title}`}
     >
-      <div className="mx-4 w-full max-w-sm rounded-2xl bg-white p-6 shadow-2xl dark:bg-gray-800">
+      <div className="mx-4 w-full max-w-sm rounded-2xl border border-white/20 bg-white/80 p-5 shadow-2xl backdrop-blur-xl sm:p-6 dark:border-gray-700/50 dark:bg-gray-800/80">
         <div className="aspect-square w-full overflow-hidden rounded-xl">
           <img src={song.coverUrl} alt={song.title} className="size-full object-cover" />
         </div>

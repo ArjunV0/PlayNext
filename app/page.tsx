@@ -66,16 +66,22 @@ export default function HomePage() {
   return (
     <>
       <header className="sticky top-0 z-10 border-b border-white/20 bg-white/60 backdrop-blur-xl dark:border-gray-700/50 dark:bg-gray-900/60">
-        <div className="mx-auto flex max-w-screen-xl items-center gap-4 px-4 py-3">
-          <h1 className="text-lg font-bold text-gray-900 dark:text-white">PlayNext</h1>
-          <div className="flex-1">
+        <div className="mx-auto max-w-screen-xl px-4 py-3">
+          <div className="flex items-center gap-3">
+            <h1 className="shrink-0 text-lg font-bold text-gray-900 dark:text-white">PlayNext</h1>
+            <div className="hidden flex-1 sm:block">
+              <SearchInput />
+            </div>
+            <div className="flex-1 sm:hidden" />
+            <ToggleSwitch />
+            <UserMenu />
+          </div>
+          <div className="mt-2 sm:hidden">
             <SearchInput />
           </div>
-          <ToggleSwitch />
-          <UserMenu />
         </div>
       </header>
-      <main className="mx-auto max-w-screen-xl px-4 py-8 pb-24">
+      <main className="mx-auto max-w-screen-xl px-4 py-4 pb-24 sm:py-8">
         <SongSection
           title="Selected For You"
           songs={selectedForYou}

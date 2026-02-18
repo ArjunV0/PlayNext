@@ -22,13 +22,13 @@ export function SongSection({ title, songs, isLoading, onSongClick }: SongSectio
   return (
     <section className="mb-8">
       <h2 className="mb-4 text-lg font-bold text-gray-900 dark:text-white">{title}</h2>
-      <div className="grid min-h-[200px] grid-cols-2 gap-4 md:grid-cols-3 lg:grid-cols-6">
+      <div className="grid min-h-[160px] grid-cols-2 gap-2 sm:min-h-[200px] sm:gap-4 md:grid-cols-3 lg:grid-cols-6">
         {isLoading
           ? Array.from({ length: 6 }, (_, i) => <SkeletonCard key={i} />)
           : songs.length > 0
             ? songs.map((song) => <SongCard key={song.id} song={song} onClick={(s) => onSongClick(s, songs)} />)
             : (
-                <div className="col-span-full flex min-h-[200px] items-center justify-center">
+                <div className="col-span-full flex min-h-[160px] items-center justify-center sm:min-h-[200px]">
                   <p className="text-sm text-gray-400 dark:text-gray-500">No songs found</p>
                 </div>
               )}

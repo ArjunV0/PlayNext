@@ -33,7 +33,7 @@ export function PlayerControls() {
   )
 
   return (
-    <div className="flex items-center gap-3">
+    <div className="flex shrink-0 items-center gap-2 sm:gap-3">
       <button
         onClick={togglePlay}
         className="rounded-md bg-gray-100 px-3 py-1.5 text-sm font-medium text-gray-800 transition-colors hover:bg-gray-200 dark:bg-gray-700 dark:text-gray-200 dark:hover:bg-gray-600"
@@ -48,7 +48,7 @@ export function PlayerControls() {
       >
         Next
       </button>
-      <label className="flex items-center gap-1.5">
+      <label className="hidden items-center gap-1.5 sm:flex">
         <span className="text-xs text-gray-500 dark:text-gray-400">Vol</span>
         <input
           type="range"
@@ -63,7 +63,7 @@ export function PlayerControls() {
       </label>
       <button
         onClick={toggleAutoPlay}
-        className={`rounded-md px-2 py-1 text-xs font-medium transition-colors ${
+        className={`hidden rounded-md px-2 py-1 text-xs font-medium transition-colors sm:block ${
           isAutoPlay
             ? "bg-blue-100 text-blue-700 dark:bg-blue-900 dark:text-blue-300"
             : "bg-gray-100 text-gray-500 dark:bg-gray-700 dark:text-gray-400"

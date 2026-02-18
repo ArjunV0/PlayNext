@@ -9,7 +9,7 @@ export function SongCard({ song, onClick }: SongCardProps) {
   return (
     <button
       onClick={() => onClick(song)}
-      className="group w-full rounded-lg bg-gray-50 p-3 text-left transition-all duration-200 hover:scale-105 hover:bg-gray-100 hover:shadow-lg dark:bg-gray-800 dark:hover:bg-gray-700"
+      className="group w-full rounded-lg bg-gray-50 p-2 text-left transition-all duration-200 hover:scale-105 hover:bg-gray-100 hover:shadow-lg sm:p-3 dark:bg-gray-800 dark:hover:bg-gray-700"
     >
       <div className="relative aspect-square w-full overflow-hidden rounded-md bg-gray-200 dark:bg-gray-700">
         <img src={song.coverUrl} alt={song.title} className="size-full object-cover" loading="lazy" />

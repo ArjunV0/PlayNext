@@ -6,13 +6,7 @@ import { useRouter } from "next/navigation"
 import { cva } from "class-variance-authority"
 import { twMerge } from "tailwind-merge"
 
-import {
-  signInWithGoogle,
-  signInWithMagicLink,
-  signInWithPassword,
-  signUpWithPassword,
-  resetPassword,
-} from "./actions"
+import { signInWithGoogle, signInWithMagicLink, signInWithPassword, signUpWithPassword, resetPassword } from "./actions"
 
 import { APP_NAME } from "lib/constants"
 
@@ -45,11 +39,7 @@ const button = cva(
           "dark:border-gray-600/60 dark:bg-gray-800/60 dark:text-gray-200",
           "dark:hover:bg-gray-700/60",
         ],
-        primary: [
-          "bg-blue-600 text-white",
-          "hover:bg-blue-700",
-          "dark:bg-blue-500 dark:hover:bg-blue-600",
-        ],
+        primary: ["bg-blue-600 text-white", "hover:bg-blue-700", "dark:bg-blue-500 dark:hover:bg-blue-600"],
       },
     },
   }
@@ -201,7 +191,10 @@ export function LoginCard({ searchParams }: LoginCardProps) {
         </div>
         <button
           type="button"
-          onClick={() => { clearErrors(); setView("sign-in") }}
+          onClick={() => {
+            clearErrors()
+            setView("sign-in")
+          }}
           className="w-full text-center text-sm text-blue-600 hover:underline dark:text-blue-400"
         >
           Back to sign in
@@ -221,7 +214,10 @@ export function LoginCard({ searchParams }: LoginCardProps) {
         </div>
         <button
           type="button"
-          onClick={() => { clearErrors(); setView("sign-in") }}
+          onClick={() => {
+            clearErrors()
+            setView("sign-in")
+          }}
           className="w-full text-center text-sm text-blue-600 hover:underline dark:text-blue-400"
         >
           Back to sign in
@@ -241,7 +237,10 @@ export function LoginCard({ searchParams }: LoginCardProps) {
         </div>
         <button
           type="button"
-          onClick={() => { clearErrors(); setView("sign-in") }}
+          onClick={() => {
+            clearErrors()
+            setView("sign-in")
+          }}
           className="w-full text-center text-sm text-blue-600 hover:underline dark:text-blue-400"
         >
           Back to sign in
@@ -276,18 +275,17 @@ export function LoginCard({ searchParams }: LoginCardProps) {
             onChange={(e) => setEmail(e.target.value)}
             className={inputClass}
           />
-          <button
-            type="submit"
-            disabled={isResetPending}
-            className={twMerge(button({ variant: "primary" }))}
-          >
+          <button type="submit" disabled={isResetPending} className={twMerge(button({ variant: "primary" }))}>
             {isResetPending ? "Sending..." : "Send reset link"}
           </button>
         </form>
 
         <button
           type="button"
-          onClick={() => { clearErrors(); setView("sign-in") }}
+          onClick={() => {
+            clearErrors()
+            setView("sign-in")
+          }}
           className="w-full text-center text-sm text-blue-600 hover:underline dark:text-blue-400"
         >
           Back to sign in
@@ -344,14 +342,14 @@ export function LoginCard({ searchParams }: LoginCardProps) {
           onChange={(e) => setPassword(e.target.value)}
           className={inputClass}
         />
-        <button
-          type="submit"
-          disabled={isSubmitting}
-          className={twMerge(button({ variant: "primary" }))}
-        >
+        <button type="submit" disabled={isSubmitting} className={twMerge(button({ variant: "primary" }))}>
           {isSubmitting
-            ? (isSignUp ? "Creating account..." : "Signing in...")
-            : (isSignUp ? "Create account" : "Sign in")}
+            ? isSignUp
+              ? "Creating account..."
+              : "Signing in..."
+            : isSignUp
+            ? "Create account"
+            : "Sign in"}
         </button>
       </form>
 
@@ -359,7 +357,10 @@ export function LoginCard({ searchParams }: LoginCardProps) {
         <div className="flex items-center justify-between text-sm">
           <button
             type="button"
-            onClick={() => { clearErrors(); setView("reset-password") }}
+            onClick={() => {
+              clearErrors()
+              setView("reset-password")
+            }}
             className="text-gray-500 hover:underline dark:text-gray-400"
           >
             Forgot password?
@@ -379,7 +380,10 @@ export function LoginCard({ searchParams }: LoginCardProps) {
         {isSignUp ? "Already have an account?" : "Don't have an account?"}{" "}
         <button
           type="button"
-          onClick={() => { clearErrors(); setView(isSignUp ? "sign-in" : "sign-up") }}
+          onClick={() => {
+            clearErrors()
+            setView(isSignUp ? "sign-in" : "sign-up")
+          }}
           className="text-blue-600 hover:underline dark:text-blue-400"
         >
           {isSignUp ? "Sign in" : "Sign up"}

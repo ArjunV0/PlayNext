@@ -23,6 +23,12 @@ const AUTH_ERRORS: Record<string, string> = {
 
 type AuthView = "sign-in" | "sign-up" | "magic-link-sent" | "reset-password" | "reset-sent" | "confirm-email"
 
+const cardClass = twMerge(
+  "w-full max-w-sm space-y-6 rounded-2xl p-8 shadow-xl",
+  "border border-white/20 bg-white/70 backdrop-blur-xl",
+  "dark:border-gray-700/50 dark:bg-gray-800/70"
+)
+
 const button = cva(
   [
     "flex w-full items-center justify-center gap-3 rounded-lg px-4 py-3",
@@ -34,10 +40,10 @@ const button = cva(
     variants: {
       variant: {
         google: [
-          "border border-gray-300 bg-white text-gray-700",
-          "hover:bg-gray-50",
-          "dark:border-gray-600 dark:bg-gray-800 dark:text-gray-200",
-          "dark:hover:bg-gray-700",
+          "border border-gray-300/60 bg-white/60 text-gray-700 backdrop-blur",
+          "hover:bg-white/80",
+          "dark:border-gray-600/60 dark:bg-gray-800/60 dark:text-gray-200",
+          "dark:hover:bg-gray-700/60",
         ],
         primary: [
           "bg-blue-600 text-white",
@@ -50,10 +56,10 @@ const button = cva(
 )
 
 const inputClass = twMerge(
-  "w-full rounded-lg border border-gray-300 bg-white px-4 py-3",
+  "w-full rounded-lg border border-white/30 bg-white/50 px-4 py-3 backdrop-blur",
   "text-sm text-gray-900 placeholder-gray-400",
   "focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500",
-  "dark:border-gray-600 dark:bg-gray-800 dark:text-white dark:placeholder-gray-500",
+  "dark:border-gray-600/50 dark:bg-gray-800/50 dark:text-white dark:placeholder-gray-500",
   "dark:focus:border-blue-400 dark:focus:ring-blue-400"
 )
 
@@ -83,9 +89,9 @@ function GoogleIcon() {
 function Divider() {
   return (
     <div className="flex items-center gap-3">
-      <div className="h-px flex-1 bg-gray-200 dark:bg-gray-700" />
+      <div className="h-px flex-1 bg-gray-300/40 dark:bg-gray-600/40" />
       <span className="text-xs text-gray-400 dark:text-gray-500">or</span>
-      <div className="h-px flex-1 bg-gray-200 dark:bg-gray-700" />
+      <div className="h-px flex-1 bg-gray-300/40 dark:bg-gray-600/40" />
     </div>
   )
 }
@@ -104,20 +110,27 @@ export function LoginCard({ searchParams }: LoginCardProps) {
   const [email, setEmail] = useState("")
   const [password, setPassword] = useState("")
   const [error, setError] = useState<string | null>(null)
+  const [urlErrorDismissed, setUrlErrorDismissed] = useState(false)
 
   const [isGoogleLoading, setIsGoogleLoading] = useState(false)
   const [isSubmitting, startTransition] = useTransition()
   const [isMagicLinkPending, startMagicLink] = useTransition()
   const [isResetPending, startReset] = useTransition()
 
+  function clearErrors() {
+    setError(null)
+    setUrlErrorDismissed(true)
+  }
+
   async function handleGoogleSignIn() {
+    clearErrors()
     setIsGoogleLoading(true)
     await signInWithGoogle(redirectTo)
   }
 
   function handlePasswordSubmit(e: React.FormEvent) {
     e.preventDefault()
-    setError(null)
+    clearErrors()
 
     startTransition(async () => {
       if (view === "sign-up") {
@@ -147,7 +160,7 @@ export function LoginCard({ searchParams }: LoginCardProps) {
       setError("Enter your email address first.")
       return
     }
-    setError(null)
+    clearErrors()
 
     startMagicLink(async () => {
       const result = await signInWithMagicLink(email, redirectTo)
@@ -161,7 +174,7 @@ export function LoginCard({ searchParams }: LoginCardProps) {
 
   function handleResetSubmit(e: React.FormEvent) {
     e.preventDefault()
-    setError(null)
+    clearErrors()
 
     startReset(async () => {
       const result = await resetPassword(email, redirectTo)
@@ -173,12 +186,13 @@ export function LoginCard({ searchParams }: LoginCardProps) {
     })
   }
 
-  const errorMessage = errorCode ? AUTH_ERRORS[errorCode] : error
+  const urlError = !urlErrorDismissed && errorCode ? AUTH_ERRORS[errorCode] : null
+  const errorMessage = urlError ?? error
 
   // Confirmation screens
   if (view === "magic-link-sent") {
     return (
-      <div className="w-full max-w-sm space-y-6 rounded-xl border border-gray-200 bg-white p-8 shadow-sm dark:border-gray-700 dark:bg-gray-800">
+      <div className={cardClass}>
         <div className="text-center">
           <h1 className="text-2xl font-bold text-gray-900 dark:text-white">Check your email</h1>
           <p className="mt-2 text-sm text-gray-500 dark:text-gray-400">
@@ -187,7 +201,7 @@ export function LoginCard({ searchParams }: LoginCardProps) {
         </div>
         <button
           type="button"
-          onClick={() => { setError(null); setView("sign-in") }}
+          onClick={() => { clearErrors(); setView("sign-in") }}
           className="w-full text-center text-sm text-blue-600 hover:underline dark:text-blue-400"
         >
           Back to sign in
@@ -198,7 +212,7 @@ export function LoginCard({ searchParams }: LoginCardProps) {
 
   if (view === "confirm-email") {
     return (
-      <div className="w-full max-w-sm space-y-6 rounded-xl border border-gray-200 bg-white p-8 shadow-sm dark:border-gray-700 dark:bg-gray-800">
+      <div className={cardClass}>
         <div className="text-center">
           <h1 className="text-2xl font-bold text-gray-900 dark:text-white">Confirm your email</h1>
           <p className="mt-2 text-sm text-gray-500 dark:text-gray-400">
@@ -207,7 +221,7 @@ export function LoginCard({ searchParams }: LoginCardProps) {
         </div>
         <button
           type="button"
-          onClick={() => { setError(null); setView("sign-in") }}
+          onClick={() => { clearErrors(); setView("sign-in") }}
           className="w-full text-center text-sm text-blue-600 hover:underline dark:text-blue-400"
         >
           Back to sign in
@@ -218,7 +232,7 @@ export function LoginCard({ searchParams }: LoginCardProps) {
 
   if (view === "reset-sent") {
     return (
-      <div className="w-full max-w-sm space-y-6 rounded-xl border border-gray-200 bg-white p-8 shadow-sm dark:border-gray-700 dark:bg-gray-800">
+      <div className={cardClass}>
         <div className="text-center">
           <h1 className="text-2xl font-bold text-gray-900 dark:text-white">Check your email</h1>
           <p className="mt-2 text-sm text-gray-500 dark:text-gray-400">
@@ -227,7 +241,7 @@ export function LoginCard({ searchParams }: LoginCardProps) {
         </div>
         <button
           type="button"
-          onClick={() => { setError(null); setView("sign-in") }}
+          onClick={() => { clearErrors(); setView("sign-in") }}
           className="w-full text-center text-sm text-blue-600 hover:underline dark:text-blue-400"
         >
           Back to sign in
@@ -239,7 +253,7 @@ export function LoginCard({ searchParams }: LoginCardProps) {
   // Reset password form
   if (view === "reset-password") {
     return (
-      <div className="w-full max-w-sm space-y-6 rounded-xl border border-gray-200 bg-white p-8 shadow-sm dark:border-gray-700 dark:bg-gray-800">
+      <div className={cardClass}>
         <div className="text-center">
           <h1 className="text-2xl font-bold text-gray-900 dark:text-white">Reset password</h1>
           <p className="mt-2 text-sm text-gray-500 dark:text-gray-400">
@@ -248,7 +262,7 @@ export function LoginCard({ searchParams }: LoginCardProps) {
         </div>
 
         {errorMessage && (
-          <div className="rounded-lg bg-red-50 px-4 py-3 text-sm text-red-700 dark:bg-red-900/30 dark:text-red-400">
+          <div className="rounded-lg bg-red-50/80 px-4 py-3 text-sm text-red-700 dark:bg-red-900/30 dark:text-red-400">
             {errorMessage}
           </div>
         )}
@@ -273,7 +287,7 @@ export function LoginCard({ searchParams }: LoginCardProps) {
 
         <button
           type="button"
-          onClick={() => { setError(null); setView("sign-in") }}
+          onClick={() => { clearErrors(); setView("sign-in") }}
           className="w-full text-center text-sm text-blue-600 hover:underline dark:text-blue-400"
         >
           Back to sign in
@@ -286,7 +300,7 @@ export function LoginCard({ searchParams }: LoginCardProps) {
   const isSignUp = view === "sign-up"
 
   return (
-    <div className="w-full max-w-sm space-y-6 rounded-xl border border-gray-200 bg-white p-8 shadow-sm dark:border-gray-700 dark:bg-gray-800">
+    <div className={cardClass}>
       <div className="text-center">
         <h1 className="text-2xl font-bold text-gray-900 dark:text-white">{APP_NAME}</h1>
         <p className="mt-2 text-sm text-gray-500 dark:text-gray-400">
@@ -295,7 +309,7 @@ export function LoginCard({ searchParams }: LoginCardProps) {
       </div>
 
       {errorMessage && (
-        <div className="rounded-lg bg-red-50 px-4 py-3 text-sm text-red-700 dark:bg-red-900/30 dark:text-red-400">
+        <div className="rounded-lg bg-red-50/80 px-4 py-3 text-sm text-red-700 dark:bg-red-900/30 dark:text-red-400">
           {errorMessage}
         </div>
       )}
@@ -345,7 +359,7 @@ export function LoginCard({ searchParams }: LoginCardProps) {
         <div className="flex items-center justify-between text-sm">
           <button
             type="button"
-            onClick={() => { setError(null); setView("reset-password") }}
+            onClick={() => { clearErrors(); setView("reset-password") }}
             className="text-gray-500 hover:underline dark:text-gray-400"
           >
             Forgot password?
@@ -365,7 +379,7 @@ export function LoginCard({ searchParams }: LoginCardProps) {
         {isSignUp ? "Already have an account?" : "Don't have an account?"}{" "}
         <button
           type="button"
-          onClick={() => { setError(null); setView(isSignUp ? "sign-in" : "sign-up") }}
+          onClick={() => { clearErrors(); setView(isSignUp ? "sign-in" : "sign-up") }}
           className="text-blue-600 hover:underline dark:text-blue-400"
         >
           {isSignUp ? "Sign in" : "Sign up"}

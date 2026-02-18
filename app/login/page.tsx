@@ -12,7 +12,7 @@ interface LoginPageProps {
 
 export default function LoginPage({ searchParams }: LoginPageProps) {
   return (
-    <main className="flex min-h-screen items-center justify-center bg-gray-50 px-4 dark:bg-gray-900">
+    <main className="flex min-h-screen items-center justify-center bg-gradient-to-br from-gray-100 via-blue-50 to-gray-100 px-4 dark:from-gray-900 dark:via-gray-800 dark:to-gray-900">
       <LoginCard searchParams={searchParams} />
     </main>
   )

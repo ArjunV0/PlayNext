@@ -1,6 +1,7 @@
-import { Metadata } from "next"
-import { Button } from "components/Button/Button"
+import type { Metadata } from "next"
 
+import { Button } from "components/Button/Button"
+import { UserMenu } from "features/auth/UserMenu"
 import { LP_GRID_ITEMS } from "lp-items"
 
 export const metadata: Metadata = {
@@ -23,6 +24,12 @@ export const metadata: Metadata = {
 export default function Web() {
   return (
     <>
+      <header className="sticky top-0 z-10 border-b border-gray-200 bg-white/80 backdrop-blur dark:border-gray-700 dark:bg-gray-900/80">
+        <div className="mx-auto flex max-w-(--breakpoint-xl) items-center justify-between px-4 py-3">
+          <h1 className="text-lg font-bold text-gray-900 dark:text-white">PlayNext</h1>
+          <UserMenu />
+        </div>
+      </header>
       <section className="bg-white dark:bg-gray-900">
         <div className="mx-auto grid max-w-(--breakpoint-xl) px-4 py-8 text-center lg:py-16">
           <div className="mx-auto place-self-center">

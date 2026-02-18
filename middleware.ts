@@ -5,7 +5,7 @@ import { createServerClient } from "@supabase/ssr"
 
 import { env } from "env.mjs"
 
-const PUBLIC_ROUTES = ["/login", "/auth/callback", "/api/health"]
+const PUBLIC_ROUTES = ["/login", "/auth/callback", "/api"]
 
 function isPublicRoute(pathname: string): boolean {
   return PUBLIC_ROUTES.some((route) => pathname.startsWith(route))

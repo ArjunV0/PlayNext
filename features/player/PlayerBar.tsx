@@ -10,7 +10,9 @@ export function PlayerBar() {
   if (!currentSong) return null
 
   return (
-    <div className="fixed right-0 bottom-0 left-0 border-t border-white/20 bg-white/60 backdrop-blur-xl dark:border-gray-700/50 dark:bg-gray-900/60">
+    <div className="fixed right-0 bottom-0 left-0 animate-slide-up border-t border-white/20 bg-white/70 backdrop-blur-xl dark:border-gray-700/50 dark:bg-gray-900/70">
+      {/* Top edge glow */}
+      <div className="absolute inset-x-0 -top-px h-px bg-gradient-to-r from-transparent via-blue-500/40 to-transparent" />
       <div className="mx-auto max-w-screen-lg px-3 pt-2 pb-3 sm:px-4">
         <PlayerProgress />
         <div className="mt-2 flex items-center justify-between">
@@ -19,10 +21,10 @@ export function PlayerBar() {
               <img
                 src={currentSong.coverUrl}
                 alt={currentSong.title}
-                className="size-10 shrink-0 rounded bg-gray-200 object-cover dark:bg-gray-700"
+                className="size-10 shrink-0 rounded-lg bg-gray-200 object-cover shadow-sm dark:bg-gray-700"
               />
             ) : (
-              <div className="flex size-10 shrink-0 items-center justify-center rounded bg-gray-200 text-sm text-gray-500 dark:bg-gray-700 dark:text-gray-400">
+              <div className="flex size-10 shrink-0 items-center justify-center rounded-lg bg-gray-200 text-sm text-gray-500 dark:bg-gray-700 dark:text-gray-400">
                 ♪
               </div>
             )}

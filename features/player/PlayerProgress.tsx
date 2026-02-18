@@ -39,9 +39,18 @@ export function PlayerProgress() {
         aria-valuenow={Math.round(currentTime)}
         aria-valuemax={Math.round(duration)}
         onClick={handleSeek}
-        className="relative h-1.5 flex-1 cursor-pointer rounded-full bg-gray-200 dark:bg-gray-700"
+        className="group relative h-1.5 flex-1 cursor-pointer rounded-full bg-gray-200 transition-all hover:h-2.5 dark:bg-gray-700"
       >
-        <div className="absolute inset-y-0 left-0 rounded-full bg-blue-500" style={{ width: `${progress}%` }} />
+        {/* Gradient filled portion */}
+        <div
+          className="absolute inset-y-0 left-0 rounded-full bg-gradient-to-r from-blue-500 to-violet-500 transition-all"
+          style={{ width: `${progress}%` }}
+        />
+        {/* Thumb dot — visible on hover */}
+        <div
+          className="absolute top-1/2 size-3.5 -translate-y-1/2 rounded-full bg-white opacity-0 shadow-md ring-2 ring-blue-500 transition-opacity group-hover:opacity-100"
+          style={{ left: `calc(${progress}% - 7px)` }}
+        />
       </div>
       <span className="w-10 text-xs text-gray-500 tabular-nums dark:text-gray-400">{formatTime(duration)}</span>
     </div>

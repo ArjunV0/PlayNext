@@ -11,7 +11,6 @@ import { PlayerBar } from "features/player/PlayerBar"
 import type { Song } from "features/player/PlayerContext"
 import { usePlayer } from "features/player/usePlayer"
 import { SearchInput } from "features/search/SearchInput"
-import { SearchResults } from "features/search/SearchResults"
 import { ToggleSwitch } from "features/theme/ToggleSwitch"
 
 export default function HomePage() {
@@ -77,7 +76,6 @@ export default function HomePage() {
         </div>
       </header>
       <main className="mx-auto max-w-screen-xl px-4 py-8 pb-24">
-        <SearchResults />
         <SongSection
           title="Selected For You"
           songs={selectedForYou}

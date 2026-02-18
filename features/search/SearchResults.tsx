@@ -21,7 +21,7 @@ function SongItem({ song, onSelect }: { song: SearchSongWithAudio; onSelect: (so
   return (
     <button
       onClick={() => onSelect(song)}
-      className="flex w-full items-center gap-3 rounded-lg px-3 py-2 text-left transition-colors hover:bg-gray-100 dark:hover:bg-gray-800"
+      className="flex w-full items-center gap-3 rounded-lg px-3 py-2 text-left transition-colors hover:bg-gray-100/60 dark:hover:bg-gray-800/60"
     >
       {song.coverUrl ? (
         <img
@@ -45,7 +45,7 @@ function SongItem({ song, onSelect }: { song: SearchSongWithAudio; onSelect: (so
   )
 }
 
-export function SearchResults() {
+export function SearchResults({ onClose }: { onClose?: () => void }) {
   const { query, results, isLoading } = useSearch()
   const { playSong } = usePlayer()
   const [recommended, setRecommended] = useState<SearchSongWithAudio[]>([])
@@ -90,14 +90,15 @@ export function SearchResults() {
         audioUrl: s.audioUrl!,
       }))
     playSong(playerSong, allSongs)
+    onClose?.()
   }
 
   if (isQueryEmpty) {
     if (recommended.length === 0) return null
     return (
-      <div className="mt-4">
-        <p className="mb-2 text-xs font-medium text-gray-500 dark:text-gray-400">Recommended</p>
-        <div className="space-y-1">
+      <div className="p-2">
+        <p className="mb-2 px-2 text-xs font-medium text-gray-500 dark:text-gray-400">Recommended</p>
+        <div className="space-y-0.5">
           {recommended.map((song) => (
             <SongItem key={song.id} song={song} onSelect={handleSelect} />
           ))}
@@ -106,14 +107,18 @@ export function SearchResults() {
     )
   }
 
+  if (isLoading) {
+    return <p className="py-6 text-center text-sm text-gray-400">Searching...</p>
+  }
+
   if (hasNoResults) {
     return (
-      <div className="mt-4">
-        <p className="py-8 text-center text-sm text-gray-500 dark:text-gray-400">No results found</p>
+      <div className="p-2">
+        <p className="py-6 text-center text-sm text-gray-500 dark:text-gray-400">No results found</p>
         {recommended.length > 0 && (
           <>
-            <p className="mb-2 text-xs font-medium text-gray-500 dark:text-gray-400">Recommended</p>
-            <div className="space-y-1">
+            <p className="mb-2 px-2 text-xs font-medium text-gray-500 dark:text-gray-400">Recommended</p>
+            <div className="space-y-0.5">
               {recommended.map((song) => (
                 <SongItem key={song.id} song={song} onSelect={handleSelect} />
               ))}
@@ -124,12 +129,8 @@ export function SearchResults() {
     )
   }
 
-  if (isLoading) {
-    return <p className="mt-4 py-8 text-center text-sm text-gray-400">Searching...</p>
-  }
-
   return (
-    <div className="mt-4 space-y-1">
+    <div className="space-y-0.5 p-2">
       {(results as SearchSongWithAudio[]).map((song) => (
         <SongItem key={song.id} song={song} onSelect={handleSelect} />
       ))}

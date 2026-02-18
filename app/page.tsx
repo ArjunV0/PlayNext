@@ -3,8 +3,8 @@
 import { useCallback, useEffect, useState } from "react"
 
 import { UserMenu } from "features/auth/UserMenu"
-import { SECTIONS } from "features/home/albums.constants"
-import { SongSection } from "features/home/AlbumSection"
+import { SECTIONS } from "features/home/sections.constants"
+import { SongSection } from "features/home/SongSection"
 import { fetchSongs } from "features/home/itunes"
 import { PlayerBar } from "features/player/PlayerBar"
 import type { Song } from "features/player/PlayerContext"

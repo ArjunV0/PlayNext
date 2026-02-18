@@ -1,5 +1,5 @@
 import type { Song } from "features/player/PlayerContext"
-import type { SectionConfig } from "./albums.constants"
+import type { SectionConfig } from "./sections.constants"
 
 export async function fetchSongs(config: SectionConfig, limit: number = 6, signal?: AbortSignal): Promise<Song[]> {
   const params = new URLSearchParams({

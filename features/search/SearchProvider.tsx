@@ -66,20 +66,27 @@ export function SearchProvider({ children }: { children: React.ReactNode }) {
     }
 
     setIsLoading(true)
+    const controller = new AbortController()
 
     debounceRef.current = setTimeout(async () => {
-      const params = new URLSearchParams({ q: trimmed })
-      const response = await fetch(`/api/search?${params.toString()}`)
-      const data = (await response.json()) as { results: Song[] }
-      setResults(data.results)
-      setIsLoading(false)
-      setRecentSearches((prev) => saveRecentSearch(trimmed, prev))
+      try {
+        const params = new URLSearchParams({ q: trimmed })
+        const response = await fetch(`/api/search?${params.toString()}`, { signal: controller.signal })
+        const data = (await response.json()) as { results: Song[] }
+        setResults(data.results)
+        setIsLoading(false)
+        setRecentSearches((prev) => saveRecentSearch(trimmed, prev))
+      } catch (e) {
+        if (e instanceof DOMException && e.name === "AbortError") return
+        setIsLoading(false)
+      }
     }, DEBOUNCE_DELAY_MS)
 
     return () => {
       if (debounceRef.current) {
         clearTimeout(debounceRef.current)
       }
+      controller.abort()
     }
   }, [query])
 

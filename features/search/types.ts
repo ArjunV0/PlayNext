@@ -4,6 +4,7 @@ export interface Song {
   artist: string
   duration: number
   coverUrl: string
+  audioUrl?: string
 }
 
 export const MAX_RECENT_SEARCHES = 2

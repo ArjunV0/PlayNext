@@ -10,7 +10,7 @@ export function PlayerBar() {
   if (!currentSong) return null
 
   return (
-    <div className="fixed right-0 bottom-0 left-0 border-t border-gray-200 bg-white dark:border-gray-700 dark:bg-gray-900">
+    <div className="fixed right-0 bottom-0 left-0 border-t border-white/20 bg-white/60 backdrop-blur-xl dark:border-gray-700/50 dark:bg-gray-900/60">
       <div className="mx-auto max-w-screen-lg px-4 pt-2 pb-3">
         <PlayerProgress />
         <div className="mt-2 flex items-center justify-between">

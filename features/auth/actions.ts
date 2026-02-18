@@ -29,10 +29,7 @@ export async function signInWithGoogle(redirectTo?: string) {
   redirect(data.url)
 }
 
-export async function signInWithMagicLink(
-  email: string,
-  redirectTo?: string
-): Promise<{ error: string | null }> {
+export async function signInWithMagicLink(email: string, redirectTo?: string): Promise<{ error: string | null }> {
   const supabase = await createClient()
   const baseUrl = await getBaseUrl()
   const callbackUrl = `${baseUrl}/auth/callback${redirectTo ? `?next=${redirectTo}` : ""}`
@@ -49,10 +46,7 @@ export async function signInWithMagicLink(
   return { error: null }
 }
 
-export async function signInWithPassword(
-  email: string,
-  password: string
-): Promise<{ error: string | null }> {
+export async function signInWithPassword(email: string, password: string): Promise<{ error: string | null }> {
   const supabase = await createClient()
 
   const { error } = await supabase.auth.signInWithPassword({
@@ -94,10 +88,7 @@ export async function signUpWithPassword(
   return { error: null }
 }
 
-export async function resetPassword(
-  email: string,
-  redirectTo?: string
-): Promise<{ error: string | null }> {
+export async function resetPassword(email: string, redirectTo?: string): Promise<{ error: string | null }> {
   const supabase = await createClient()
   const baseUrl = await getBaseUrl()
   const callbackUrl = `${baseUrl}/auth/callback${redirectTo ? `?next=${redirectTo}` : ""}`

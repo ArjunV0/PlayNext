@@ -26,12 +26,12 @@ export function AuthProvider({ children, initialSession }: AuthProviderProps) {
   useEffect(() => {
     const supabase = createClient()
 
-    const { data: { subscription } } = supabase.auth.onAuthStateChange(
-      (_event, newSession) => {
-        setSession(newSession)
-        setIsLoading(false)
-      }
-    )
+    const {
+      data: { subscription },
+    } = supabase.auth.onAuthStateChange((_event, newSession) => {
+      setSession(newSession)
+      setIsLoading(false)
+    })
 
     return () => subscription.unsubscribe()
   }, [])

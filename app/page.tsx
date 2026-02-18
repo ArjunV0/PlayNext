@@ -1,10 +1,11 @@
 "use client"
 
-import { useEffect, useState } from "react"
+import { useCallback, useEffect, useRef, useState } from "react"
 
 import { SECTION_TERMS } from "features/home/albums.constants"
 import { SongSection } from "features/home/AlbumSection"
 import { fetchSongs } from "features/home/itunes"
+import { SongModal } from "features/home/SongModal"
 import { PlayerBar } from "features/player/PlayerBar"
 import type { Song } from "features/player/PlayerContext"
 import { usePlayer } from "features/player/usePlayer"
@@ -18,6 +19,8 @@ export default function HomePage() {
   const [topGlobal, setTopGlobal] = useState<Song[]>([])
   const [topIndia, setTopIndia] = useState<Song[]>([])
   const [isLoading, setIsLoading] = useState(true)
+  const [modalSong, setModalSong] = useState<Song | null>(null)
+  const pendingQueueRef = useRef<Song[]>([])
 
   useEffect(() => {
     const controller = new AbortController()
@@ -44,6 +47,22 @@ export default function HomePage() {
     return () => controller.abort()
   }, [])
 
+  const handleSongClick = useCallback((song: Song, queue: Song[]) => {
+    setModalSong(song)
+    pendingQueueRef.current = queue
+  }, [])
+
+  const handleModalPlay = useCallback(() => {
+    if (modalSong) {
+      playSong(modalSong, pendingQueueRef.current)
+      setModalSong(null)
+    }
+  }, [modalSong, playSong])
+
+  const handleModalClose = useCallback(() => {
+    setModalSong(null)
+  }, [])
+
   return (
     <>
       <header className="sticky top-0 z-10 border-b border-gray-200 bg-white/80 backdrop-blur dark:border-gray-700 dark:bg-gray-900/80">
@@ -61,21 +80,12 @@ export default function HomePage() {
           title="Selected For You"
           songs={selectedForYou}
           isLoading={isLoading}
-          onSongClick={(song, queue) => playSong(song, queue)}
+          onSongClick={handleSongClick}
         />
-        <SongSection
-          title="Top Hits Global"
-          songs={topGlobal}
-          isLoading={isLoading}
-          onSongClick={(song, queue) => playSong(song, queue)}
-        />
-        <SongSection
-          title="Top Hits India"
-          songs={topIndia}
-          isLoading={isLoading}
-          onSongClick={(song, queue) => playSong(song, queue)}
-        />
+        <SongSection title="Top Hits Global" songs={topGlobal} isLoading={isLoading} onSongClick={handleSongClick} />
+        <SongSection title="Top Hits India" songs={topIndia} isLoading={isLoading} onSongClick={handleSongClick} />
       </main>
+      <SongModal song={modalSong} onPlay={handleModalPlay} onClose={handleModalClose} />
       <PlayerBar />
     </>
   )

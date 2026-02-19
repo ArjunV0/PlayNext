@@ -2,6 +2,7 @@
 
 import { useCallback, useEffect, useState } from "react"
 
+import { UserMenu } from "features/auth/UserMenu"
 import { fetchSongs } from "features/home/itunes"
 import { SECTIONS } from "features/home/sections.constants"
 import { SongSection } from "features/home/SongSection"
@@ -61,6 +62,7 @@ export default function HomePage() {
             </div>
             <div className="flex-1 sm:hidden" />
             <ToggleSwitch />
+            <UserMenu />
           </div>
           <div className="mt-2 sm:hidden">
             <SearchInput />

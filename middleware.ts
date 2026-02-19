@@ -5,10 +5,11 @@ import { createServerClient } from "@supabase/ssr"
 
 import { env } from "env.mjs"
 
-const PUBLIC_ROUTES = ["/login", "/auth/callback", "/api"]
+const PUBLIC_PREFIX_ROUTES = ["/login", "/auth/callback", "/api"]
+const PUBLIC_EXACT_ROUTES = ["/"]
 
 function isPublicRoute(pathname: string): boolean {
-  return PUBLIC_ROUTES.some((route) => pathname.startsWith(route))
+  return PUBLIC_EXACT_ROUTES.includes(pathname) || PUBLIC_PREFIX_ROUTES.some((route) => pathname.startsWith(route))
 }
 
 export async function middleware(request: NextRequest) {

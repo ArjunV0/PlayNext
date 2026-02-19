@@ -1,10 +1,11 @@
 import { expect, test } from "@playwright/test"
 
 test.describe("Auth flow", () => {
-  test("unauthenticated user on / is redirected to /login", async ({ page }) => {
+  test("homepage is publicly accessible without auth", async ({ page }) => {
     await page.goto("/")
-    await page.waitForURL("**/login**")
-    expect(page.url()).toContain("/login")
+    await page.waitForLoadState("domcontentloaded")
+    expect(page.url()).not.toContain("/login")
+    await expect(page.locator("header").getByText("PlayNext")).toBeVisible()
   })
 
   test("login page renders PlayNext branding", async ({ page }) => {

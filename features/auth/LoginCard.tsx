@@ -167,7 +167,7 @@ export function LoginCard({ searchParams }: LoginCardProps) {
     clearErrors()
 
     startReset(async () => {
-      const result = await resetPassword(email, redirectTo)
+      const result = await resetPassword(email)
       if (result.error) {
         setError(result.error)
       } else {
@@ -232,7 +232,7 @@ export function LoginCard({ searchParams }: LoginCardProps) {
         <div className="text-center">
           <h1 className="text-2xl font-bold text-gray-900 dark:text-white">Check your email</h1>
           <p className="mt-2 text-sm text-gray-500 dark:text-gray-400">
-            We sent a password reset link to your email. Click it to set a new password.
+            We sent a recovery link to your email. Click it to set a new password.
           </p>
         </div>
         <button
@@ -249,14 +249,13 @@ export function LoginCard({ searchParams }: LoginCardProps) {
     )
   }
 
-  // Reset password form
   if (view === "reset-password") {
     return (
       <div className={cardClass}>
         <div className="text-center">
-          <h1 className="text-2xl font-bold text-gray-900 dark:text-white">Reset password</h1>
+          <h1 className="text-2xl font-bold text-gray-900 dark:text-white">Forgot password?</h1>
           <p className="mt-2 text-sm text-gray-500 dark:text-gray-400">
-            Enter your email and we&apos;ll send you a reset link.
+            Enter your email and we&apos;ll send you a link to set a new password.
           </p>
         </div>
 
@@ -276,7 +275,7 @@ export function LoginCard({ searchParams }: LoginCardProps) {
             className={inputClass}
           />
           <button type="submit" disabled={isResetPending} className={twMerge(button({ variant: "primary" }))}>
-            {isResetPending ? "Sending..." : "Send reset link"}
+            {isResetPending ? "Sending..." : "Send recovery link"}
           </button>
         </form>
 
@@ -371,7 +370,7 @@ export function LoginCard({ searchParams }: LoginCardProps) {
             disabled={isMagicLinkPending}
             className="text-blue-600 hover:underline dark:text-blue-400"
           >
-            {isMagicLinkPending ? "Sending..." : "Send magic link"}
+            {isMagicLinkPending ? "Sending..." : "Sign in with magic link"}
           </button>
         </div>
       )}

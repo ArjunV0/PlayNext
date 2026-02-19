@@ -1,5 +1,6 @@
 "use client"
 
+import Link from "next/link"
 import * as DropdownMenu from "@radix-ui/react-dropdown-menu"
 
 import { useAuth } from "./useAuth"
@@ -12,7 +13,16 @@ const FALLBACK_AVATAR =
 export function UserMenu() {
   const { user } = useAuth()
 
-  if (!user) return null
+  if (!user) {
+    return (
+      <Link
+        href="/login"
+        className="shrink-0 rounded-lg px-3 py-1.5 text-sm font-medium text-gray-700 transition-colors hover:bg-gray-100 dark:text-gray-200 dark:hover:bg-gray-800"
+      >
+        Sign in
+      </Link>
+    )
+  }
 
   const avatarUrl = user.user_metadata?.avatar_url ?? FALLBACK_AVATAR
   const email = user.email ?? ""

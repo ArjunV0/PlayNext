@@ -7,24 +7,18 @@ async function waitForSongCards(page: import("@playwright/test").Page) {
   return songCard
 }
 
-/** Helper: click first song card within a section (not search results) */
-async function clickFirstSong(page: import("@playwright/test").Page) {
+/** Helper: click first song card to start playback, then wait for player bar */
+async function startPlayback(page: import("@playwright/test").Page) {
   const card = page
     .locator("main section button")
     .filter({ has: page.locator("img[src*='mzstatic.com']") })
     .first()
   await expect(card).toBeVisible({ timeout: 10000 })
   await card.click()
-  return card
-}
 
-/** Helper: click song card, then click Play in modal */
-async function playSongViaModal(page: import("@playwright/test").Page) {
-  await clickFirstSong(page)
-  const modal = page.locator("[role='dialog']")
-  await expect(modal).toBeVisible({ timeout: 5000 })
-  await modal.getByRole("button", { name: "Play" }).click()
-  await expect(modal).not.toBeVisible()
+  const playerBar = page.locator(".fixed.bottom-0")
+  await expect(playerBar).toBeVisible({ timeout: 5000 })
+  return playerBar
 }
 
 test("has title", async ({ page }) => {
@@ -35,7 +29,7 @@ test("has title", async ({ page }) => {
 test("displays header with branding, search, and theme toggle", async ({ page }) => {
   await page.goto("/")
   await expect(page.locator("header").getByText("PlayNext")).toBeVisible()
-  await expect(page.getByPlaceholder("Search songs or artists...")).toBeVisible()
+  await expect(page.getByPlaceholder("Search songs or artists...").first()).toBeVisible()
   await expect(page.getByRole("button", { name: /switch to/i })).toBeVisible()
 })
 
@@ -79,44 +73,16 @@ test("dark mode changes page background", async ({ page }) => {
   expect(bodyBg).not.toBe("rgb(255, 255, 255)")
 })
 
-test("clicking a song opens modal with song details", async ({ page }) => {
+test("clicking a song starts playback and shows player bar", async ({ page }) => {
   await page.goto("/")
-  await clickFirstSong(page)
+  const playerBar = await startPlayback(page)
 
-  const modal = page.locator("[role='dialog']")
-  await expect(modal).toBeVisible({ timeout: 5000 })
-  await expect(modal.getByRole("button", { name: "Play" })).toBeVisible()
-  await expect(modal.getByRole("button", { name: "Close" })).toBeVisible()
-})
-
-test("modal Play button starts playback and shows player bar", async ({ page }) => {
-  await page.goto("/")
-  await playSongViaModal(page)
-
-  const playerBar = page.locator(".fixed.bottom-0")
-  await expect(playerBar).toBeVisible()
   await expect(playerBar.getByRole("button", { name: /pause/i })).toBeVisible()
-})
-
-test("modal Close button dismisses without playing", async ({ page }) => {
-  await page.goto("/")
-  await clickFirstSong(page)
-
-  const modal = page.locator("[role='dialog']")
-  await expect(modal).toBeVisible({ timeout: 5000 })
-  await modal.getByRole("button", { name: "Close" }).click()
-
-  await expect(modal).not.toBeVisible()
-  const playerBar = page.locator(".fixed.bottom-0")
-  await expect(playerBar).not.toBeVisible()
 })
 
 test("next button advances to the next song", async ({ page }) => {
   await page.goto("/")
-  await playSongViaModal(page)
-
-  const playerBar = page.locator(".fixed.bottom-0")
-  await expect(playerBar).toBeVisible()
+  const playerBar = await startPlayback(page)
 
   const firstTitle = await playerBar.locator("p.font-medium").textContent()
 
@@ -128,10 +94,7 @@ test("next button advances to the next song", async ({ page }) => {
 
 test("player controls work", async ({ page }) => {
   await page.goto("/")
-  await playSongViaModal(page)
-
-  const playerBar = page.locator(".fixed.bottom-0")
-  await expect(playerBar).toBeVisible()
+  const playerBar = await startPlayback(page)
 
   const pauseBtn = playerBar.getByRole("button", { name: /pause/i })
   await expect(pauseBtn).toBeVisible()
@@ -144,7 +107,7 @@ test("player controls work", async ({ page }) => {
 
 test("search returns real iTunes results", async ({ page }) => {
   await page.goto("/")
-  const searchInput = page.getByPlaceholder("Search songs or artists...")
+  const searchInput = page.getByPlaceholder("Search songs or artists...").first()
   await searchInput.fill("taylor swift")
 
   await page.waitForTimeout(500)
@@ -157,7 +120,7 @@ test("search returns real iTunes results", async ({ page }) => {
 
 test("search shows no results for gibberish", async ({ page }) => {
   await page.goto("/")
-  const searchInput = page.getByPlaceholder("Search songs or artists...")
+  const searchInput = page.getByPlaceholder("Search songs or artists...").first()
   await searchInput.fill("xyznonexistent99999")
 
   await page.waitForTimeout(500)
@@ -166,7 +129,7 @@ test("search shows no results for gibberish", async ({ page }) => {
 
 test("progress bar is visible in player", async ({ page }) => {
   await page.goto("/")
-  await playSongViaModal(page)
+  await startPlayback(page)
 
   const progressBar = page.locator("[role='progressbar']")
   await expect(progressBar).toBeVisible()

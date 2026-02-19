@@ -40,7 +40,7 @@ function ClearIcon() {
 }
 
 export function SearchInput() {
-  const { query, setQuery, isLoading, recentSearches } = useSearch()
+  const { query, setQuery, isLoading, recentSearches, clearRecentSearches } = useSearch()
   const isQueryEmpty = query.trim() === ""
   const [isFocused, setIsFocused] = useState(false)
   const wrapperRef = useRef<HTMLDivElement>(null)
@@ -126,7 +126,16 @@ export function SearchInput() {
         <div className="animate-slide-down absolute top-full right-0 left-0 z-50 mt-2 max-h-[400px] overflow-y-auto rounded-xl border border-white/20 bg-white/90 shadow-xl backdrop-blur-xl dark:border-gray-700/50 dark:bg-gray-900/90">
           {isQueryEmpty && recentSearches.length > 0 && (
             <div className="border-b border-gray-200/50 p-3 dark:border-gray-700/50">
-              <p className="mb-2 text-xs font-medium text-gray-500 dark:text-gray-400">Recent searches</p>
+              <div className="mb-2 flex items-center justify-between">
+                <p className="text-xs font-medium text-gray-500 dark:text-gray-400">Recent searches</p>
+                <button
+                  onMouseDown={(e) => e.preventDefault()}
+                  onClick={clearRecentSearches}
+                  className="text-xs text-gray-400 transition-colors hover:text-red-500 dark:text-gray-500 dark:hover:text-red-400"
+                >
+                  Clear all
+                </button>
+              </div>
               <div className="flex flex-wrap gap-2">
                 {recentSearches.map((term) => (
                   <button

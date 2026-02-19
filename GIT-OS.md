@@ -267,6 +267,9 @@ Never:
 -   Push broken tests
 -   Force push main
 -   Rewrite shared history
+-   Include AI attribution (no `Co-Authored-By` lines, no AI tool mentions)
+
+Commits should look human-authored. No fingerprints.
 
 Automation depends on consistency.
 
@@ -285,6 +288,23 @@ If it looks messy → clean before pushing.
 
 Git is communication.
 Automation is the reader.
+
+------------------------------------------------------------------------
+
+# 12. Pre-Push Verification
+
+Before pushing any branch, run these checks locally:
+
+1.  **Lint check:** `pnpm run lint`
+2.  **Format check:** `pnpm run prettier`
+3.  **Unit & Integration tests:** `pnpm run test`
+4.  **Build:** `SKIP_ENV_VALIDATION=true pnpm build`
+
+All must pass before pushing. Do not rely on CI to catch what you
+can catch locally. CI is a safety net, not the first line of defense.
+
+This mirrors the GitHub Actions Check workflow. If it fails locally,
+it will fail in CI. Fix before pushing.
 
 ------------------------------------------------------------------------
 

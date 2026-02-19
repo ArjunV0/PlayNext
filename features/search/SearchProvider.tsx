@@ -12,6 +12,7 @@ export interface SearchContextValue {
   recentSearches: string[]
   setQuery: (query: string) => void
   clearResults: () => void
+  clearRecentSearches: () => void
 }
 
 export const SearchContext = createContext<SearchContextValue | null>(null)
@@ -44,9 +45,14 @@ export function SearchProvider({ children }: { children: React.ReactNode }) {
     setQuery("")
   }, [])
 
+  const clearRecentSearches = useCallback(() => {
+    localStorage.removeItem(RECENT_SEARCHES_KEY)
+    setRecentSearches([])
+  }, [])
+
   const value = useMemo(
-    () => ({ query, results, isLoading, recentSearches, setQuery, clearResults }),
-    [query, results, isLoading, recentSearches, clearResults]
+    () => ({ query, results, isLoading, recentSearches, setQuery, clearResults, clearRecentSearches }),
+    [query, results, isLoading, recentSearches, clearResults, clearRecentSearches]
   )
 
   useEffect(() => {

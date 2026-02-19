@@ -22,7 +22,7 @@ test.describe("Auth flow", () => {
   test("login page renders magic link form", async ({ page }) => {
     await page.goto("/login")
     await expect(page.getByPlaceholder("Email address")).toBeVisible()
-    await expect(page.getByRole("button", { name: /Send magic link/i })).toBeVisible()
+    await expect(page.getByRole("button", { name: /Sign in with magic link/i })).toBeVisible()
   })
 
   test("magic link form validates email input", async ({ page }) => {

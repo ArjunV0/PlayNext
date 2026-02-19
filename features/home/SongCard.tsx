@@ -9,13 +9,13 @@ interface SongCardProps {
 }
 
 export function SongCard({ song, onClick }: SongCardProps) {
-  const { currentSong, isPlaying } = usePlayer()
+  const { currentSong, isPlaying, togglePlay } = usePlayer()
   const isActive = currentSong?.id === song.id
   const showPause = isActive && isPlaying
 
   return (
     <button
-      onClick={() => onClick(song)}
+      onClick={() => (isActive ? togglePlay() : onClick(song))}
       className={`group w-full rounded-xl p-2 text-left transition-all duration-300 hover:scale-[1.03] hover:shadow-xl sm:p-3 ${
         isActive
           ? "bg-white shadow-lg ring-1 ring-blue-500/30 dark:bg-gray-800 dark:ring-violet-500/30"

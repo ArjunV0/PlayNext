@@ -21,7 +21,6 @@
     "e2e:headless": "playwright test",
     "e2e:ui": "playwright test --ui",
     "format": "prettier --write \"**/*.{ts,tsx,md}\"",
-    "postinstall": "npx patch-package -y",
     "coupling-graph": "npx madge --extensions js,jsx,ts,tsx,css,md,mdx ./ --exclude '.next|tailwind.config.js|reset.d.ts|prettier.config.js|postcss.config.js|playwright.config.ts|next.config.js|next-env.d.ts|instrumentation.ts|e2e/|README.md|.storybook/|.eslintrc.js' --image graph.svg"
   },
   "dependencies": {
@@ -103,10 +102,8 @@
     "gzip-size": "6.0.0",
     "jsdom": "^26.1.0",
     "mkdirp": "^3.0.1",
-    "patch-package": "^8.0.0",
     "postcss": "^8.5.3",
     "postcss-import": "^16.1.0",
-    "postinstall-postinstall": "^2.1.0",
     "prettier": "3.0.3",
     "prettier-plugin-tailwindcss": "^0.6.11",
     "semantic-release": "^22.0.12",

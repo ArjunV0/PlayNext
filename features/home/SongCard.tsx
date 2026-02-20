@@ -90,7 +90,6 @@ export function SongCard({ song, onClick }: SongCardProps) {
                 Add to queue
               </span>
             </div>
-            <div
           </div>
         </div>
       </div>

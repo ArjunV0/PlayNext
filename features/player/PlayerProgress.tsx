@@ -2,15 +2,9 @@
 
 import { useCallback, useRef } from "react"
 
+import { formatDuration } from "lib/format"
+
 import { usePlayer } from "./usePlayer"
-
-const SECONDS_PER_MINUTE = 60
-
-function formatTime(seconds: number): string {
-  const mins = Math.floor(seconds / SECONDS_PER_MINUTE)
-  const secs = Math.floor(seconds % SECONDS_PER_MINUTE)
-  return `${mins}:${secs.toString().padStart(2, "0")}`
-}
 
 export function PlayerProgress() {
   const { currentTime, duration, seek } = usePlayer()
@@ -31,7 +25,7 @@ export function PlayerProgress() {
   return (
     <div className="flex w-full items-center gap-2">
       <span className="w-10 text-right text-xs text-gray-500 tabular-nums dark:text-gray-400">
-        {formatTime(currentTime)}
+        {formatDuration(currentTime)}
       </span>
       <div
         ref={barRef}
@@ -52,7 +46,7 @@ export function PlayerProgress() {
           style={{ left: `calc(${progress}% - 7px)` }}
         />
       </div>
-      <span className="w-10 text-xs text-gray-500 tabular-nums dark:text-gray-400">{formatTime(duration)}</span>
+      <span className="w-10 text-xs text-gray-500 tabular-nums dark:text-gray-400">{formatDuration(duration)}</span>
     </div>
   )
 }

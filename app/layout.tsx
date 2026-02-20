@@ -5,6 +5,7 @@ import { AuthProvider } from "features/auth"
 import { PlayerProvider } from "features/player/PlayerContext"
 import { SearchProvider } from "features/search/SearchProvider"
 import { ThemeProvider } from "features/theme/ThemeProvider"
+import { ToastProvider } from "features/toast"
 
 export const metadata: Metadata = {
   title: "PlayNext",
@@ -16,11 +17,13 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
     <html lang="en" suppressHydrationWarning>
       <body className="bg-white text-gray-900 dark:bg-gray-900 dark:text-white">
         <ThemeProvider>
-          <AuthProvider>
-            <PlayerProvider>
-              <SearchProvider>{children}</SearchProvider>
-            </PlayerProvider>
-          </AuthProvider>
+          <ToastProvider>
+            <AuthProvider>
+              <PlayerProvider>
+                <SearchProvider>{children}</SearchProvider>
+              </PlayerProvider>
+            </AuthProvider>
+          </ToastProvider>
         </ThemeProvider>
       </body>
     </html>

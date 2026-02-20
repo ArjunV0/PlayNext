@@ -1,9 +1,8 @@
 "use client"
 
-import { useCallback, useEffect, useRef, useState } from "react"
+import { useRouter, usePathname } from "next/navigation"
 
 import { useSearch } from "./useSearch"
-import { SearchResults } from "./SearchResults"
 
 function SearchIcon() {
   return (
@@ -40,50 +39,36 @@ function ClearIcon() {
 }
 
 export function SearchInput() {
-  const { query, setQuery, isLoading, recentSearches, clearRecentSearches } = useSearch()
+  const { query, setQuery, isLoading } = useSearch()
+  const router = useRouter()
+  const pathname = usePathname()
   const isQueryEmpty = query.trim() === ""
-  const [isFocused, setIsFocused] = useState(false)
-  const wrapperRef = useRef<HTMLDivElement>(null)
-  const blurTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null)
+  const isOnSearch = pathname === "/search"
 
-  const showDropdown = isFocused && (recentSearches.length > 0 || !isQueryEmpty)
-
-  const closeDropdown = useCallback(() => {
-    setIsFocused(false)
-  }, [])
-
-  const handleFocus = () => {
-    if (blurTimeoutRef.current) {
-      clearTimeout(blurTimeoutRef.current)
-      blurTimeoutRef.current = null
-    }
-    setIsFocused(true)
-  }
-
-  const handleBlur = () => {
-    blurTimeoutRef.current = setTimeout(() => {
-      setIsFocused(false)
-    }, 200)
-  }
-
-  useEffect(() => {
-    return () => {
-      if (blurTimeoutRef.current) {
-        clearTimeout(blurTimeoutRef.current)
+  const handleChange = (value: string) => {
+    setQuery(value)
+    const trimmed = value.trim()
+    if (trimmed) {
+      const url = `/search?q=${encodeURIComponent(trimmed)}`
+      if (isOnSearch) {
+        router.replace(url, { scroll: false })
+      } else {
+        router.push(url, { scroll: false })
       }
+    } else if (isOnSearch) {
+      router.replace("/search", { scroll: false })
     }
-  }, [])
-
-  const handleRecentClick = (term: string): void => {
-    setQuery(term)
   }
 
   const handleClear = () => {
     setQuery("")
+    if (isOnSearch) {
+      router.replace("/search", { scroll: false })
+    }
   }
 
   return (
-    <div ref={wrapperRef} className="relative w-full">
+    <div className="relative w-full">
       <div className="relative">
         {/* Search icon */}
         <span className="pointer-events-none absolute top-1/2 left-3.5 -translate-y-1/2">
@@ -92,9 +77,7 @@ export function SearchInput() {
         <input
           type="text"
           value={query}
-          onChange={(e) => setQuery(e.target.value)}
-          onFocus={handleFocus}
-          onBlur={handleBlur}
+          onChange={(e) => handleChange(e.target.value)}
           placeholder="Search songs or artists..."
           className="w-full rounded-xl border border-gray-200/60 bg-gray-50/80 py-2.5 pr-10 pl-10 text-sm text-gray-900 placeholder-gray-400 transition-all focus:border-blue-500/50 focus:bg-white focus:shadow-lg focus:ring-1 focus:shadow-blue-500/5 focus:ring-blue-500/30 focus:outline-none dark:border-gray-600/60 dark:bg-gray-800/80 dark:text-white dark:placeholder-gray-500 dark:focus:border-blue-400/50 dark:focus:bg-gray-800 dark:focus:shadow-blue-500/5"
         />
@@ -121,38 +104,6 @@ export function SearchInput() {
           </button>
         ) : null}
       </div>
-
-      {showDropdown && (
-        <div className="animate-slide-down absolute top-full right-0 left-0 z-50 mt-2 max-h-[400px] overflow-y-auto rounded-xl border border-white/20 bg-white/90 shadow-xl backdrop-blur-xl dark:border-gray-700/50 dark:bg-gray-900/90">
-          {isQueryEmpty && recentSearches.length > 0 && (
-            <div className="border-b border-gray-200/50 p-3 dark:border-gray-700/50">
-              <div className="mb-2 flex items-center justify-between">
-                <p className="text-xs font-medium text-gray-500 dark:text-gray-400">Recent searches</p>
-                <button
-                  onMouseDown={(e) => e.preventDefault()}
-                  onClick={clearRecentSearches}
-                  className="text-xs text-gray-400 transition-colors hover:text-red-500 dark:text-gray-500 dark:hover:text-red-400"
-                >
-                  Clear all
-                </button>
-              </div>
-              <div className="flex flex-wrap gap-2">
-                {recentSearches.map((term) => (
-                  <button
-                    key={term}
-                    onMouseDown={(e) => e.preventDefault()}
-                    onClick={() => handleRecentClick(term)}
-                    className="rounded-full bg-gray-100/80 px-3 py-1 text-xs text-gray-700 transition-colors hover:bg-gray-200/80 dark:bg-gray-700/80 dark:text-gray-300 dark:hover:bg-gray-600/80"
-                  >
-                    {term}
-                  </button>
-                ))}
-              </div>
-            </div>
-          )}
-          <SearchResults onClose={closeDropdown} />
-        </div>
-      )}
     </div>
   )
 }

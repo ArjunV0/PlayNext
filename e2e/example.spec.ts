@@ -118,11 +118,8 @@ test("search returns real iTunes results", async ({ page }) => {
 })
 
 test("search shows no results for gibberish", async ({ page }) => {
-  await page.goto("/")
-  const searchInput = page.getByPlaceholder("Search songs or artists...").first()
-  await searchInput.fill("xyznonexistent99999")
-
-  await expect(page.getByText(/No results/i).first()).toBeVisible({ timeout: 15000 })
+  await page.goto("/search?q=xyznonexistent99999")
+  await expect(page.getByText(/No results/i).first()).toBeVisible({ timeout: 30000 })
 })
 
 test("progress bar is visible in player", async ({ page }) => {

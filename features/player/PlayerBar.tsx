@@ -4,13 +4,21 @@ import { PlayerControls } from "./PlayerControls"
 import { PlayerProgress } from "./PlayerProgress"
 import { usePlayer } from "./usePlayer"
 
+function QueueToggleIcon() {
+  return (
+    <svg className="size-4" fill="currentColor" viewBox="0 0 24 24">
+      <path d="M15 6H3v2h12V6zm0 4H3v2h12v-2zM3 16h8v-2H3v2zM17 6v8.18c-.31-.11-.65-.18-1-.18-1.66 0-3 1.34-3 3s1.34 3 3 3 3-1.34 3-3V8h3V6h-5z" />
+    </svg>
+  )
+}
+
 export function PlayerBar() {
-  const { currentSong } = usePlayer()
+  const { currentSong, upNext, isQueueOpen, toggleQueue } = usePlayer()
 
   if (!currentSong) return null
 
   return (
-    <div className="animate-slide-up fixed right-0 bottom-0 left-0 border-t border-white/20 bg-white/70 backdrop-blur-xl dark:border-gray-700/50 dark:bg-gray-900/70">
+    <div className="animate-slide-up fixed right-0 bottom-0 left-0 z-50 border-t border-white/20 bg-white/70 backdrop-blur-xl dark:border-gray-700/50 dark:bg-gray-900/70">
       {/* Top edge glow */}
       <div className="absolute inset-x-0 -top-px h-px bg-gradient-to-r from-transparent via-blue-500/40 to-transparent" />
       <div className="mx-auto max-w-screen-lg px-3 pt-2 pb-3 sm:px-4">
@@ -36,6 +44,22 @@ export function PlayerBar() {
             </div>
           </div>
           <PlayerControls />
+          <button
+            onClick={toggleQueue}
+            className={`relative ml-1 flex size-8 cursor-pointer items-center justify-center rounded-full transition-colors ${
+              isQueueOpen
+                ? "bg-blue-100 text-blue-600 dark:bg-blue-900/50 dark:text-blue-400"
+                : "text-gray-500 hover:bg-gray-100 hover:text-gray-700 dark:text-gray-400 dark:hover:bg-gray-700 dark:hover:text-gray-200"
+            }`}
+            aria-label={isQueueOpen ? "Close queue" : "Open queue"}
+          >
+            <QueueToggleIcon />
+            {upNext.length > 0 && (
+              <span className="absolute -top-1 -right-1 flex size-4 items-center justify-center rounded-full bg-blue-500 text-[10px] font-bold text-white">
+                {upNext.length > 9 ? "9+" : upNext.length}
+              </span>
+            )}
+          </button>
         </div>
       </div>
     </div>

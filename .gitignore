@@ -7,6 +7,9 @@ node_modules
 
 # testing
 coverage
+/test-results/
+/playwright-report/
+/playwright/.cache/
 
 # next.js
 .next/
@@ -16,6 +19,7 @@ build
 # misc
 .DS_Store
 *.pem
+tsconfig.tsbuildinfo
 
 # debug
 npm-debug.log*
@@ -24,14 +28,29 @@ yarn-error.log*
 .pnpm-debug.log*
 
 # local env files
+.env
 .env.local
 .env.development.local
 .env.test.local
 .env.production.local
-storybook-static/
-/test-results/
-/playwright-report/
-/playwright/.cache/
 
-/.npm-only-allow
+# storybook
+storybook-static/
+
+# vercel
 .vercel
+/.npm-only-allow
+
+# IDE
+.vscode/
+.idea/
+
+# AI tooling & local docs
+.claude/
+.claudeignore
+.wednesday/
+.planning/
+.DOCS/
+DOCS/
+CLAUDE.md
+design-system/

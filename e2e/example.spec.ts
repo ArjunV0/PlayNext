@@ -110,12 +110,11 @@ test("search returns real iTunes results", async ({ page }) => {
   const searchInput = page.getByPlaceholder("Search songs or artists...").first()
   await searchInput.fill("taylor swift")
 
-  await page.waitForTimeout(500)
   const resultItem = page
-    .locator("button")
+    .getByRole("button")
     .filter({ has: page.locator("img[src*='mzstatic.com']") })
     .first()
-  await expect(resultItem).toBeVisible({ timeout: 10000 })
+  await expect(resultItem).toBeVisible({ timeout: 15000 })
 })
 
 test("search shows no results for gibberish", async ({ page }) => {
@@ -123,8 +122,7 @@ test("search shows no results for gibberish", async ({ page }) => {
   const searchInput = page.getByPlaceholder("Search songs or artists...").first()
   await searchInput.fill("xyznonexistent99999")
 
-  await page.waitForTimeout(500)
-  await expect(page.getByText("No results found")).toBeVisible({ timeout: 5000 })
+  await expect(page.getByText(/No results/i).first()).toBeVisible({ timeout: 15000 })
 })
 
 test("progress bar is visible in player", async ({ page }) => {

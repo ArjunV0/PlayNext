@@ -98,6 +98,36 @@
   }
 }
 
+@keyframes slideInLeft {
+  from {
+    transform: translateX(-100%);
+  }
+
+  to {
+    transform: translateX(0);
+  }
+}
+
+@keyframes slideOutLeft {
+  from {
+    transform: translateX(0);
+  }
+
+  to {
+    transform: translateX(-100%);
+  }
+}
+
+@keyframes fadeOut {
+  from {
+    opacity: 1;
+  }
+
+  to {
+    opacity: 0;
+  }
+}
+
 /* --- Utility Classes --- */
 
 @layer utilities {
@@ -136,5 +166,17 @@
 
   .glow-blue-strong {
     box-shadow: 0 0 30px rgba(59, 130, 246, 0.25);
+  }
+
+  .animate-slide-in-left {
+    animation: slideInLeft 0.3s cubic-bezier(0.16, 1, 0.3, 1) both;
+  }
+
+  .animate-slide-out-left {
+    animation: slideOutLeft 0.2s ease-in both;
+  }
+
+  .animate-fade-out {
+    animation: fadeOut 0.2s ease-out both;
   }
 }

@@ -3,6 +3,7 @@ import "styles/tailwind.css"
 
 import { AuthProvider } from "features/auth"
 import { PlayerProvider } from "features/player/PlayerContext"
+import { PlaylistProvider } from "features/playlist"
 import { SearchProvider } from "features/search/SearchProvider"
 import { ThemeProvider } from "features/theme/ThemeProvider"
 import { ToastProvider } from "features/toast"
@@ -20,7 +21,9 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
           <ToastProvider>
             <AuthProvider>
               <PlayerProvider>
-                <SearchProvider>{children}</SearchProvider>
+                <PlaylistProvider>
+                  <SearchProvider>{children}</SearchProvider>
+                </PlaylistProvider>
               </PlayerProvider>
             </AuthProvider>
           </ToastProvider>

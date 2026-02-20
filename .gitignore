@@ -39,3 +39,21 @@ e2e/screenshots/
 
 # claude code
 .claude/
+.claudeignore
+
+# planning & docs
+.planning/
+.DOCS/
+DOCS/
+CLAUDE.md
+
+
+
+# storybook
+.storybook/
+
+# vscode
+.vscode/
+
+# wednesday
+.wednesday/

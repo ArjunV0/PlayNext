@@ -1,2 +1,7 @@
+export { AddToPlaylistDropdown } from "./AddToPlaylistDropdown"
+export { CreatePlaylistDialog } from "./CreatePlaylistDialog"
+export { DeletePlaylistDialog } from "./DeletePlaylistDialog"
+export { PlaylistPage } from "./PlaylistPage"
 export { PlaylistProvider } from "./PlaylistContext"
+export { PlaylistSongRow } from "./PlaylistSongRow"
 export { usePlaylist } from "./usePlaylist"

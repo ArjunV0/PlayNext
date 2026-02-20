@@ -1,0 +1,14 @@
+import { Header } from "features/header"
+import { PlayerBar } from "features/player/PlayerBar"
+
+export default function AppLayout({ children }: { children: React.ReactNode }) {
+  return (
+    <>
+      <Header />
+      <div className="flex">
+        <main className="mx-auto w-full max-w-screen-xl px-4 py-4 pb-24 sm:py-8">{children}</main>
+      </div>
+      <PlayerBar />
+    </>
+  )
+}

@@ -22,6 +22,13 @@ export default function LoginPage() {
     }
   }, [user, isLoading, router])
 
+  useEffect(() => {
+    const params = new URLSearchParams(window.location.search)
+    if (params.get("error") === "auth_callback_failed") {
+      setError("Authentication failed")
+    }
+  }, [])
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
     setError(null)

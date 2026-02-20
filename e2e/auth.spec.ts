@@ -11,7 +11,7 @@ test.describe("Auth flow", () => {
   test("login page renders PlayNext branding", async ({ page }) => {
     await page.goto("/login")
     await expect(page.getByRole("heading", { name: "PlayNext" })).toBeVisible()
-    await expect(page.getByText("Sign in to continue")).toBeVisible()
+    await expect(page.getByText("Sign in to your account")).toBeVisible()
   })
 
   test("login page renders Google SSO button", async ({ page }) => {
@@ -19,15 +19,15 @@ test.describe("Auth flow", () => {
     await expect(page.getByRole("button", { name: /Continue with Google/i })).toBeVisible()
   })
 
-  test("login page renders magic link form", async ({ page }) => {
+  test("login page renders email form", async ({ page }) => {
     await page.goto("/login")
-    await expect(page.getByPlaceholder("Email address")).toBeVisible()
-    await expect(page.getByRole("button", { name: /Sign in with magic link/i })).toBeVisible()
+    await expect(page.getByPlaceholder("you@example.com")).toBeVisible()
+    await expect(page.getByRole("button", { name: /Sign in/i })).toBeVisible()
   })
 
-  test("magic link form validates email input", async ({ page }) => {
+  test("email form validates email input", async ({ page }) => {
     await page.goto("/login")
-    const emailInput = page.getByPlaceholder("Email address")
+    const emailInput = page.getByLabel("Email")
     await expect(emailInput).toHaveAttribute("type", "email")
     await expect(emailInput).toHaveAttribute("required", "")
   })

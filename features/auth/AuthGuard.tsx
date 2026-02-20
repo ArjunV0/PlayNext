@@ -6,15 +6,20 @@ import { useRouter } from "next/navigation"
 
 import { useAuth } from "./AuthContext"
 
+const SKIP_AUTH = process.env.NEXT_PUBLIC_SKIP_AUTH === "true"
+
 export function AuthGuard({ children }: { children: React.ReactNode }) {
   const { user, isLoading } = useAuth()
   const router = useRouter()
 
   useEffect(() => {
+    if (SKIP_AUTH) return
     if (!isLoading && !user) {
       router.push("/login")
     }
   }, [user, isLoading, router])
+
+  if (SKIP_AUTH) return <>{children}</>
 
   if (isLoading) {
     return (

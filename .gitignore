@@ -32,10 +32,15 @@ storybook-static/
 /test-results/
 /playwright-report/
 /playwright/.cache/
-e2e/screenshots/
 
 /.npm-only-allow
 .vercel
+tsconfig.tsbuildinfo
 
-# claude code
+# AI tooling & local docs
 .claude/
+.wednesday/
+.planning/
+.DOCS/
+DOCS/
+design-system/

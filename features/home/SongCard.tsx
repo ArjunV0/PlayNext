@@ -3,7 +3,7 @@
 import type { Song } from "lib/types"
 
 import { usePlayer } from "features/player/usePlayer"
-
+import { AddToPlaylistDropdown } from "features/playlist/AddToPlaylistDropdown"
 import { useToast } from "features/toast"
 
 interface SongCardProps {
@@ -89,6 +89,13 @@ export function SongCard({ song, onClick }: SongCardProps) {
               <span className="pointer-events-none absolute -bottom-8 left-1/2 -translate-x-1/2 rounded-md bg-black/70 px-2 py-1 text-[10px] font-medium whitespace-nowrap text-white opacity-0 backdrop-blur-sm transition-opacity group-hover/queue:opacity-100">
                 Add to queue
               </span>
+            </div>
+            <div
+              className={`transition-all duration-300 ${
+                isActive ? "scale-100 opacity-100" : "scale-75 opacity-0 group-hover:scale-100 group-hover:opacity-100"
+              }`}
+            >
+              <AddToPlaylistDropdown song={song} />
             </div>
           </div>
         </div>

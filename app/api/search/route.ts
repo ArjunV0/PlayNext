@@ -4,6 +4,8 @@ import { z } from "zod"
 
 const searchSchema = z.object({
   q: z.string().min(1).max(100),
+  limit: z.coerce.number().int().min(1).max(50).default(10),
+  offset: z.coerce.number().int().min(0).max(500).default(0),
 })
 
 interface ITunesResult {
@@ -28,19 +30,21 @@ export async function GET(request: NextRequest): Promise<Response> {
     return Response.json({ error: "Invalid query parameter" }, { status: 400 })
   }
 
+  const { q, limit, offset } = parsed.data
+
   const searchParams = new URLSearchParams({
-    term: parsed.data.q,
+    term: q,
     media: "music",
-    limit: "10",
+    limit: String(limit + offset),
   })
 
   const response = await fetch(`https://itunes.apple.com/search?${searchParams.toString()}`)
   if (!response.ok) {
-    return Response.json({ results: [] })
+    return Response.json({ results: [], totalCount: 0 })
   }
 
   const data = (await response.json()) as ITunesResponse
-  const results = data.results
+  const filtered = data.results
     .filter((r) => r.previewUrl)
     .map((r) => ({
       id: String(r.trackId),
@@ -51,5 +55,8 @@ export async function GET(request: NextRequest): Promise<Response> {
       audioUrl: r.previewUrl,
     }))
 
-  return Response.json({ results })
+  const results = filtered.slice(offset, offset + limit)
+  const totalCount = filtered.length
+
+  return Response.json({ results, totalCount })
 }

@@ -2,7 +2,7 @@
 
 import { createContext, useCallback, useEffect, useMemo, useRef, useState } from "react"
 
-import type { Song } from "./types"
+import type { Song } from "lib/types"
 import { DEBOUNCE_DELAY_MS, MAX_RECENT_SEARCHES, RECENT_SEARCHES_KEY } from "./types"
 
 export interface SearchContextValue {
@@ -10,8 +10,10 @@ export interface SearchContextValue {
   results: Song[]
   isLoading: boolean
   recentSearches: string[]
+  totalCount: number
   setQuery: (query: string) => void
   clearResults: () => void
+  removeRecentSearch: (term: string) => void
   clearRecentSearches: () => void
 }
 
@@ -19,11 +21,15 @@ export const SearchContext = createContext<SearchContextValue | null>(null)
 
 function loadRecentSearches(): string[] {
   if (typeof window === "undefined") return []
-  const stored = localStorage.getItem(RECENT_SEARCHES_KEY)
-  if (!stored) return []
-  const parsed: unknown = JSON.parse(stored)
-  if (!Array.isArray(parsed)) return []
-  return parsed.filter((item): item is string => typeof item === "string").slice(0, MAX_RECENT_SEARCHES)
+  try {
+    const stored = localStorage.getItem(RECENT_SEARCHES_KEY)
+    if (!stored) return []
+    const parsed: unknown = JSON.parse(stored)
+    if (!Array.isArray(parsed)) return []
+    return parsed.filter((item): item is string => typeof item === "string").slice(0, MAX_RECENT_SEARCHES)
+  } catch {
+    return []
+  }
 }
 
 function saveRecentSearch(term: string, existing: string[]): string[] {
@@ -38,21 +44,41 @@ export function SearchProvider({ children }: { children: React.ReactNode }) {
   const [results, setResults] = useState<Song[]>([])
   const [isLoading, setIsLoading] = useState(false)
   const [recentSearches, setRecentSearches] = useState<string[]>([])
+  const [totalCount, setTotalCount] = useState(0)
   const debounceRef = useRef<ReturnType<typeof setTimeout> | null>(null)
 
   const clearResults = useCallback(() => {
     setResults([])
     setQuery("")
+    setTotalCount(0)
+  }, [])
+
+  const removeRecentSearch = useCallback((term: string) => {
+    setRecentSearches((prev) => {
+      const updated = prev.filter((s) => s !== term)
+      localStorage.setItem(RECENT_SEARCHES_KEY, JSON.stringify(updated))
+      return updated
+    })
   }, [])
 
   const clearRecentSearches = useCallback(() => {
-    localStorage.removeItem(RECENT_SEARCHES_KEY)
+    localStorage.setItem(RECENT_SEARCHES_KEY, JSON.stringify([]))
     setRecentSearches([])
   }, [])
 
   const value = useMemo(
-    () => ({ query, results, isLoading, recentSearches, setQuery, clearResults, clearRecentSearches }),
-    [query, results, isLoading, recentSearches, clearResults, clearRecentSearches]
+    () => ({
+      query,
+      results,
+      isLoading,
+      recentSearches,
+      totalCount,
+      setQuery,
+      clearResults,
+      removeRecentSearch,
+      clearRecentSearches,
+    }),
+    [query, results, isLoading, recentSearches, totalCount, clearResults, removeRecentSearch, clearRecentSearches]
   )
 
   useEffect(() => {
@@ -78,8 +104,9 @@ export function SearchProvider({ children }: { children: React.ReactNode }) {
       try {
         const params = new URLSearchParams({ q: trimmed })
         const response = await fetch(`/api/search?${params.toString()}`, { signal: controller.signal })
-        const data = (await response.json()) as { results: Song[] }
+        const data = (await response.json()) as { results: Song[]; totalCount: number }
         setResults(data.results)
+        setTotalCount(data.totalCount)
         setIsLoading(false)
         setRecentSearches((prev) => saveRecentSearch(trimmed, prev))
       } catch (e) {

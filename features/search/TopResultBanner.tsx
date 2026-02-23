@@ -63,15 +63,15 @@ export function TopResultBanner({ song, onPlay, onAddToQueue }: TopResultBannerP
               <div className="absolute inset-0 flex items-center justify-center rounded-lg bg-black/50">
                 <div className="flex items-end gap-1" style={{ color: AMBIENT_COLOR }}>
                   <span
-                    className="h-5 w-1 rounded-full bg-current animate-waveform-bounce"
+                    className="animate-waveform-bounce h-5 w-1 rounded-full bg-current"
                     style={{ animationDelay: "0ms" }}
                   />
                   <span
-                    className="h-7 w-1 rounded-full bg-current animate-waveform-bounce"
+                    className="animate-waveform-bounce h-7 w-1 rounded-full bg-current"
                     style={{ animationDelay: "150ms" }}
                   />
                   <span
-                    className="h-4 w-1 rounded-full bg-current animate-waveform-bounce"
+                    className="animate-waveform-bounce h-4 w-1 rounded-full bg-current"
                     style={{ animationDelay: "300ms" }}
                   />
                 </div>

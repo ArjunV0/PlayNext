@@ -207,7 +207,11 @@ export function PreSearchState({ recentSearches, onRecentClick, onRemoveRecent, 
                 key={genre.name}
                 type="button"
                 onClick={() => void handleGenreClick(genre.name)}
-                className={`bg-gradient-to-br ${genre.gradient} flex h-20 items-end rounded-xl p-3 transition-all duration-200 hover:brightness-110 sm:h-24 ${isSelected ? "scale-[0.97] ring-2 ring-white/60" : ""}`}
+                className={`bg-gradient-to-br ${
+                  genre.gradient
+                } flex h-20 items-end rounded-xl p-3 transition-all duration-200 hover:brightness-110 sm:h-24 ${
+                  isSelected ? "scale-[0.97] ring-2 ring-white/60" : ""
+                }`}
               >
                 <span className="text-sm font-bold text-white drop-shadow">{genre.name}</span>
               </button>
@@ -219,9 +223,7 @@ export function PreSearchState({ recentSearches, onRecentClick, onRemoveRecent, 
         {selectedGenre && (
           <div className="mt-4">
             <div className="mb-3 flex items-center justify-between">
-              <h3 className="text-sm font-medium text-gray-500 dark:text-gray-400">
-                Showing {selectedGenre}
-              </h3>
+              <h3 className="text-sm font-medium text-gray-500 dark:text-gray-400">Showing {selectedGenre}</h3>
               <button
                 type="button"
                 onClick={() => {
@@ -242,12 +244,7 @@ export function PreSearchState({ recentSearches, onRecentClick, onRemoveRecent, 
             ) : genreResults.length > 0 ? (
               <div className="grid grid-cols-2 gap-3 sm:grid-cols-3 lg:grid-cols-4">
                 {genreResults.map((song, index) => (
-                  <SongCard
-                    key={song.id}
-                    song={song}
-                    index={index}
-                    onClick={(s) => playSong(s, genreResults)}
-                  />
+                  <SongCard key={song.id} song={song} index={index} onClick={(s) => playSong(s, genreResults)} />
                 ))}
               </div>
             ) : null}

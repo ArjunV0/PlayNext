@@ -53,15 +53,15 @@ export function SearchResultRow({ song, index, onPlay, onAddToQueue }: SearchRes
           <div className="absolute inset-0 flex items-center justify-center rounded bg-black/50">
             <div className="flex items-end gap-0.5" style={{ color: AMBIENT_COLOR }}>
               <span
-                className="h-3 w-0.5 rounded-full bg-current animate-waveform-bounce"
+                className="animate-waveform-bounce h-3 w-0.5 rounded-full bg-current"
                 style={{ animationDelay: "0ms" }}
               />
               <span
-                className="h-4 w-0.5 rounded-full bg-current animate-waveform-bounce"
+                className="animate-waveform-bounce h-4 w-0.5 rounded-full bg-current"
                 style={{ animationDelay: "150ms" }}
               />
               <span
-                className="h-2.5 w-0.5 rounded-full bg-current animate-waveform-bounce"
+                className="animate-waveform-bounce h-2.5 w-0.5 rounded-full bg-current"
                 style={{ animationDelay: "300ms" }}
               />
             </div>

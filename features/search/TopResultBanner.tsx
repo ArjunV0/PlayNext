@@ -2,6 +2,7 @@
 
 import type { Song } from "lib/types"
 
+import { usePlayer } from "features/player/usePlayer"
 import { AddToPlaylistDropdown } from "features/playlist/AddToPlaylistDropdown"
 import { useToast } from "features/toast"
 
@@ -11,8 +12,12 @@ interface TopResultBannerProps {
   onAddToQueue: (song: Song) => void
 }
 
+const AMBIENT_COLOR = "hsl(var(--ambient-h, 271), var(--ambient-s, 81)%, var(--ambient-l, 56)%)"
+
 export function TopResultBanner({ song, onPlay, onAddToQueue }: TopResultBannerProps) {
   const { showToast } = useToast()
+  const { currentSong } = usePlayer()
+  const isCurrentlyPlaying = currentSong?.id === song.id
 
   const handleBannerClick = () => {
     onPlay(song)
@@ -32,7 +37,7 @@ export function TopResultBanner({ song, onPlay, onAddToQueue }: TopResultBannerP
       onKeyDown={(e) => {
         if (e.key === "Enter" || e.key === " ") handleBannerClick()
       }}
-      className="group relative h-48 w-full cursor-pointer overflow-hidden rounded-xl sm:h-56"
+      className="glass-card group relative h-48 w-full cursor-pointer overflow-hidden rounded-xl transition-transform duration-300 hover:scale-[1.02] sm:h-56"
     >
       {/* Blurred background image */}
       <img
@@ -43,16 +48,36 @@ export function TopResultBanner({ song, onPlay, onAddToQueue }: TopResultBannerP
       />
 
       {/* Dark gradient overlay */}
-      <div className="absolute inset-0 bg-gradient-to-r from-black/70 to-black/40" />
+      <div className="absolute inset-0 bg-gradient-to-r from-black/60 to-black/30" />
 
       {/* Content */}
       <div className="relative flex h-full items-center justify-between px-6 sm:px-8">
         <div className="flex items-center gap-5">
-          <img
-            src={song.coverUrl}
-            alt={song.title}
-            className="size-24 shrink-0 rounded-lg object-cover shadow-lg sm:size-32"
-          />
+          <div className="relative shrink-0">
+            <img
+              src={song.coverUrl}
+              alt={song.title}
+              className="size-24 rounded-lg object-cover shadow-lg sm:size-32"
+            />
+            {isCurrentlyPlaying && (
+              <div className="absolute inset-0 flex items-center justify-center rounded-lg bg-black/50">
+                <div className="flex items-end gap-1" style={{ color: AMBIENT_COLOR }}>
+                  <span
+                    className="h-5 w-1 rounded-full bg-current animate-waveform-bounce"
+                    style={{ animationDelay: "0ms" }}
+                  />
+                  <span
+                    className="h-7 w-1 rounded-full bg-current animate-waveform-bounce"
+                    style={{ animationDelay: "150ms" }}
+                  />
+                  <span
+                    className="h-4 w-1 rounded-full bg-current animate-waveform-bounce"
+                    style={{ animationDelay: "300ms" }}
+                  />
+                </div>
+              </div>
+            )}
+          </div>
           <div className="min-w-0">
             <p className="text-xs font-medium tracking-wider text-white/60 uppercase">Top Result</p>
             <h2 className="mt-1 truncate text-2xl font-bold text-white">{song.title}</h2>

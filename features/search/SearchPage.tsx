@@ -148,8 +148,8 @@ export function SearchPage() {
       )}
 
       <div className="mt-4 space-y-0.5">
-        {allResults.slice(1).map((song) => (
-          <SearchResultRow key={song.id} song={song} onPlay={handlePlay} onAddToQueue={handleAddToQueue} />
+        {allResults.slice(1).map((song, index) => (
+          <SearchResultRow key={song.id} song={song} index={index} onPlay={handlePlay} onAddToQueue={handleAddToQueue} />
         ))}
       </div>
 

@@ -17,7 +17,7 @@ const proxySchema = z.object({
           return false
         }
       },
-      { message: "URL must be from mzstatic.com" },
+      { message: "URL must be from mzstatic.com" }
     ),
 })
 

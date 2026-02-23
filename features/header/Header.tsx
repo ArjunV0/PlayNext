@@ -47,8 +47,7 @@ export function Header() {
       <div
         className="h-px w-full opacity-40"
         style={{
-          background:
-            "linear-gradient(90deg, transparent, #818cf8, #c084fc, #f472b6, transparent)",
+          background: "linear-gradient(90deg, transparent, #818cf8, #c084fc, #f472b6, transparent)",
         }}
       />
     </header>

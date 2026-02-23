@@ -1,3 +1,4 @@
+import { PageTransition } from "components/PageTransition"
 import { AmbientBackground } from "features/ambient"
 import { AuthGuard } from "features/auth"
 import { Header } from "features/header"
@@ -12,7 +13,9 @@ export default function AppLayout({ children }: { children: React.ReactNode }) {
       <Sidebar>
         <Header />
         <div className="flex">
-          <main className="mx-auto w-full max-w-screen-xl px-4 py-4 pb-24 sm:py-8">{children}</main>
+          <main className="mx-auto w-full max-w-screen-xl px-4 py-4 pb-24 sm:py-8">
+            <PageTransition>{children}</PageTransition>
+          </main>
         </div>
         <QueuePanel />
         <PlayerBar />

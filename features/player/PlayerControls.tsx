@@ -8,7 +8,7 @@ const SPACEBAR_KEY = " "
 
 function PlayIcon() {
   return (
-    <svg className="ml-0.5 size-4" fill="currentColor" viewBox="0 0 24 24">
+    <svg className="ml-0.5 size-5" fill="currentColor" viewBox="0 0 24 24">
       <path d="M8 5v14l11-7z" />
     </svg>
   )
@@ -16,7 +16,7 @@ function PlayIcon() {
 
 function PauseIcon() {
   return (
-    <svg className="size-4" fill="currentColor" viewBox="0 0 24 24">
+    <svg className="size-5" fill="currentColor" viewBox="0 0 24 24">
       <path d="M6 19h4V5H6v14zm8-14v14h4V5h-4z" />
     </svg>
   )
@@ -84,7 +84,16 @@ export function PlayerControls() {
       {/* Play / Pause */}
       <button
         onClick={togglePlay}
-        className="flex size-9 items-center justify-center rounded-full bg-gradient-to-r from-blue-500 to-violet-500 text-white shadow-md shadow-blue-500/20 transition-all hover:shadow-lg hover:shadow-blue-500/30 hover:brightness-110"
+        data-testid="play-button"
+        className={`flex size-12 items-center justify-center rounded-full text-white shadow-lg shadow-violet-500/20 transition-all hover:brightness-110 ${
+          isPlaying ? "animate-pulse-glow" : ""
+        }`}
+        style={
+          {
+            background: `linear-gradient(135deg, hsl(var(--ambient-h, 271), var(--ambient-s, 81%), var(--ambient-l, 56%)), hsl(calc(var(--ambient-h, 271) + 30), var(--ambient-s, 81%), calc(var(--ambient-l, 56%) - 5%)))`,
+            "--glow-color": `hsla(var(--ambient-h, 271), var(--ambient-s, 81%), var(--ambient-l, 56%), 0.4)`,
+          } as React.CSSProperties
+        }
         aria-label={isPlaying ? "Pause" : "Play"}
       >
         {isPlaying ? <PauseIcon /> : <PlayIcon />}

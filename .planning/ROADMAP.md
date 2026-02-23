@@ -175,11 +175,11 @@ Plans:
   3. The hover overlay on song cards transitions from fully transparent at the top to dark at the bottom rather than appearing as a flat dark rectangle
   4. The play button on an active (currently playing) song card shows a gradient fill and a pulsing glow — matching the premium style of the player bar controls
   5. Each home section header has a decorative gradient accent line below it, and section titles slide in from the left when the page loads
-**Plans**: TBD
+**Plans**: 2 plans
 
 Plans:
-- [ ] 09-01: SongCard stagger animation (inline animationDelay lookup, border glow hover, gradient overlay, gradient play button with pulse-glow)
-- [ ] 09-02: SongSection header accent line + slide-in animation, wave shimmer on skeleton cards
+- [ ] 09-01-PLAN.md -- SongCard stagger fade-in animation, ambient border glow hover, gradient overlay, active play button with pulse-glow
+- [ ] 09-02-PLAN.md -- SongSection header gradient accent line + slide-in animation, flat shimmer skeleton cards
 
 ### Phase 10: Header and Search Experience
 **Goal**: The header presents a polished brand identity and the search feature has a visual identity of its own — from an animated focus state to genre browsing cards and a waveform indicator on the playing result

@@ -7,7 +7,7 @@ import { formatDuration } from "lib/format"
 import { usePlayer } from "./usePlayer"
 
 export function PlayerProgress() {
-  const { currentTime, duration, seek } = usePlayer()
+  const { currentTime, duration, seek, isPlaying } = usePlayer()
   const barRef = useRef<HTMLDivElement>(null)
 
   const progress = duration > 0 ? (currentTime / duration) * 100 : 0
@@ -32,18 +32,24 @@ export function PlayerProgress() {
         role="progressbar"
         aria-valuenow={Math.round(currentTime)}
         aria-valuemax={Math.round(duration)}
+        data-testid="player-progress"
         onClick={handleSeek}
         className="group relative h-1.5 flex-1 cursor-pointer rounded-full bg-gray-200 transition-all hover:h-2.5 dark:bg-gray-700"
       >
         {/* Gradient filled portion */}
         <div
-          className="absolute inset-y-0 left-0 rounded-full bg-gradient-to-r from-blue-500 to-violet-500 transition-all"
+          className="absolute inset-y-0 left-0 rounded-full bg-gradient-to-r from-indigo-400 via-violet-400 to-pink-400 transition-all"
           style={{ width: `${progress}%` }}
         />
-        {/* Thumb dot — visible on hover */}
+        {/* Thumb dot — visible when playing, hover-only when paused */}
         <div
-          className="absolute top-1/2 size-3.5 -translate-y-1/2 rounded-full bg-white opacity-0 shadow-md ring-2 ring-blue-500 transition-opacity group-hover:opacity-100"
-          style={{ left: `calc(${progress}% - 7px)` }}
+          className={`absolute top-1/2 size-3.5 -translate-y-1/2 rounded-full bg-white shadow-md ring-2 ring-violet-400 transition-opacity ${
+            isPlaying ? "opacity-100" : "opacity-0 group-hover:opacity-100"
+          }`}
+          style={{
+            left: `calc(${progress}% - 7px)`,
+            ...(isPlaying ? { boxShadow: "0 0 8px rgba(196, 132, 252, 0.5)" } : {}),
+          }}
         />
       </div>
       <span className="w-10 text-xs text-gray-500 tabular-nums dark:text-gray-400">{formatDuration(duration)}</span>

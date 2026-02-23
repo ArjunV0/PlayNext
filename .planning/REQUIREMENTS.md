@@ -23,12 +23,12 @@
 
 ### Player Bar
 
-- [ ] **PLYR-01**: Player bar displays larger album art (56px) with a spinning vinyl disk animation behind it when playing
-- [ ] **PLYR-02**: Player bar has an animated gradient top border that shifts colors
-- [ ] **PLYR-03**: Long song titles scroll with a marquee animation instead of truncating
-- [ ] **PLYR-04**: Progress bar uses a vivid gradient track with a persistent glowing thumb dot when playing
-- [ ] **PLYR-05**: Play/pause button is larger with a pulse-glow animation when playing
-- [ ] **PLYR-06**: Player bar backdrop receives a subtle tint from the ambient color system
+- [x] **PLYR-01**: Player bar displays larger album art (56px) with a spinning vinyl disk animation behind it when playing
+- [x] **PLYR-02**: Player bar has an animated gradient top border that shifts colors
+- [x] **PLYR-03**: Long song titles scroll with a marquee animation instead of truncating
+- [x] **PLYR-04**: Progress bar uses a vivid gradient track with a persistent glowing thumb dot when playing
+- [x] **PLYR-05**: Play/pause button is larger with a pulse-glow animation when playing
+- [x] **PLYR-06**: Player bar backdrop receives a subtle tint from the ambient color system
 
 ### Song Cards
 
@@ -105,12 +105,12 @@
 | AMBR-03 | Phase 7 | Complete |
 | AMBR-04 | Phase 7 | Complete |
 | AMBR-05 | Phase 7 | Complete |
-| PLYR-01 | Phase 8 | Pending |
-| PLYR-02 | Phase 8 | Pending |
-| PLYR-03 | Phase 8 | Pending |
-| PLYR-04 | Phase 8 | Pending |
-| PLYR-05 | Phase 8 | Pending |
-| PLYR-06 | Phase 8 | Pending |
+| PLYR-01 | Phase 8 | Complete |
+| PLYR-02 | Phase 8 | Complete |
+| PLYR-03 | Phase 8 | Complete |
+| PLYR-04 | Phase 8 | Complete |
+| PLYR-05 | Phase 8 | Complete |
+| PLYR-06 | Phase 8 | Complete |
 | CARD-01 | Phase 9 | Pending |
 | CARD-02 | Phase 9 | Pending |
 | CARD-03 | Phase 9 | Pending |

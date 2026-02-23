@@ -110,7 +110,7 @@ Plans:
 
 - [x] **Phase 6: CSS Foundation** - Inter font, all animation keyframes, glass/gradient utilities, and reduced-motion accessibility infrastructure (completed 2026-02-23)
 - [x] **Phase 7: Ambient Color System** - Image proxy route, canvas-based color extraction, and full-viewport AmbientBackground component (completed 2026-02-23)
-- [ ] **Phase 8: Player Bar Upgrade** - Vinyl animation, enlarged album art, gradient border, ambient tint, vivid progress bar, and pulse-glow play button
+- [x] **Phase 8: Player Bar Upgrade** - Vinyl animation, enlarged album art, gradient border, ambient tint, vivid progress bar, and pulse-glow play button (completed 2026-02-23)
 - [ ] **Phase 9: Song Cards and Home** - Stagger entry animations, border glow on hover, gradient overlay, gradient play button, and section header accents
 - [ ] **Phase 10: Header and Search** - Gradient logo, search focus glow, genre discovery cards, staggered results, waveform indicator, and enhanced top result banner
 - [ ] **Phase 11: Panels and Polish** - Sidebar glassmorphism, queue panel styling, playlist hero gradient, page transitions, glassmorphism toasts, and wave shimmer skeletons
@@ -232,8 +232,8 @@ Phase 11 depends on Phase 7 (ambient vars for playlist hero) and Phase 10 (full 
 | 4. Playlist Management | v1.0 | 3/3 | Complete | 2026-02-20 |
 | 5. Full-Page Search | v1.0 | 2/2 | Complete | 2026-02-20 |
 | 6. CSS Foundation | 1/1 | Complete   | 2026-02-23 | - |
-| 7. Ambient Color System | 2/2 | Complete   | 2026-02-23 | - |
-| 8. Player Bar Upgrade | v1.1 | 0/2 | Not started | - |
+| 7. Ambient Color System | 2/2 | Complete    | 2026-02-23 | - |
+| 8. Player Bar Upgrade | 2/2 | Complete   | 2026-02-23 | - |
 | 9. Song Cards and Home | v1.1 | 0/2 | Not started | - |
 | 10. Header and Search | v1.1 | 0/2 | Not started | - |
 | 11. Panels and Polish | v1.1 | 0/4 | Not started | - |

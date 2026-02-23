@@ -10,9 +10,9 @@ See: .planning/PROJECT.md (updated 2026-02-23)
 ## Current Position
 
 Phase: 8 of 11 (Player Bar Enhancement)
-Plan: 1 of N in current phase
-Status: Phase 7 complete — ready to begin Phase 8
-Last activity: 2026-02-23 -- Completed 07-02-PLAN.md (AmbientBackground component + layout integration)
+Plan: 2 of 2 in current phase (Phase 8 complete)
+Status: Phase 8 complete — all 2 plans done (PlayerBar + PlayerProgress + PlayerControls visual upgrade)
+Last activity: 2026-02-23 -- Completed 08-02-PLAN.md (PlayerProgress vivid gradient + PlayerControls ambient play button)
 
 Progress: [█████░░░░░░░░░░░░░░░░░] 18% (7/11 phases complete — Phase 7 Ambient Color System done)
 
@@ -30,6 +30,8 @@ Progress: [█████░░░░░░░░░░░░░░░░░] 1
 
 *Updated after each plan completion*
 | 07-02 | 2min | 2 | 3 |
+| Phase 08-player-bar-upgrade P02 | 7 | 2 tasks | 2 files |
+| Phase 08-player-bar-upgrade P01 | 8min | 2 tasks | 2 files |
 
 ## Accumulated Context
 
@@ -53,6 +55,11 @@ Recent decisions affecting current work:
 - [Phase 07]: AmbientBackground uses isMounted guard + ssr:false dynamic import for double React 19 hydration protection
 - [Phase 07]: latestUrlRef queue-and-settle: async extractColor result only applied if URL hasn't changed since dispatch
 - [Phase 07]: CSS custom properties written to document.documentElement so downstream phases need no React context coupling
+- [Phase 08-player-bar-upgrade]: Play button uses inline style for ambient gradient — CSS calc() on custom properties requires inline style in Tailwind v4
+- [Phase 08-player-bar-upgrade]: animate-pulse-glow class toggled via className template literal for instant play/pause start-stop
+- [Phase Phase 08-01]: MarqueeText uses span elements only (not div) to safely nest inside p.font-medium without invalid HTML, preserving E2E selector
+- [Phase Phase 08-01]: Vinyl disk instant-stop: animate-vinyl-spin only applied when isPlaying===true, no deceleration animation
+- [Phase Phase 08-01]: Marquee duration computed as scrollWidth/30 for consistent ~30px/s pace; --marquee-duration injected via inline style as React.CSSProperties
 
 ### Pending Todos
 
@@ -67,5 +74,5 @@ None yet.
 ## Session Continuity
 
 Last session: 2026-02-23
-Stopped at: Completed 07-02-PLAN.md
-Resume file: .planning/phases/08-player-bar-enhancement/ (next phase)
+Stopped at: Completed 08-02-PLAN.md (Phase 8 fully complete)
+Resume file: .planning/phases/ (next phase — Phase 9)

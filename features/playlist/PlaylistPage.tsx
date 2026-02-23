@@ -4,6 +4,7 @@ import { useEffect, useState } from "react"
 
 import Link from "next/link"
 
+import { extractColor, FALLBACK_HSL } from "lib/colorExtractor"
 import type { PlaylistSong, Song } from "lib/types"
 import { usePlayer } from "features/player/usePlayer"
 
@@ -59,10 +60,11 @@ interface PlaylistPageProps {
 
 export function PlaylistPage({ playlistId }: PlaylistPageProps) {
   const { playlists, getPlaylistSongs, removeSongFromPlaylist, isLoading: playlistsLoading } = usePlaylist()
-  const { playSong, isShuffle, toggleShuffle } = usePlayer()
+  const { playSong, isShuffle, toggleShuffle, currentSong } = usePlayer()
   const [songs, setSongs] = useState<PlaylistSong[]>([])
   const [songsLoading, setSongsLoading] = useState(true)
   const [deleteOpen, setDeleteOpen] = useState(false)
+  const [heroHsl, setHeroHsl] = useState(FALLBACK_HSL)
 
   const playlist = playlists.find((p) => p.id === playlistId) ?? null
 
@@ -78,6 +80,19 @@ export function PlaylistPage({ playlistId }: PlaylistPageProps) {
 
     void fetchSongs()
   }, [playlistId, getPlaylistSongs, playlistsLoading])
+
+  useEffect(() => {
+    if (songs.length === 0) return
+    const firstSong = songs[0]
+    if (!firstSong?.cover_url) return
+    extractColor(firstSong.cover_url).then(setHeroHsl)
+  }, [songs])
+
+  const isPlayingFromPlaylist = Boolean(currentSong && songs.some((s) => s.song_id === currentSong.id))
+
+  const heroGradient = isPlayingFromPlaylist
+    ? `linear-gradient(135deg, hsla(var(--ambient-h, ${heroHsl.h}), var(--ambient-s, ${heroHsl.s}%), var(--ambient-l, ${heroHsl.l}%), 0.9) 0%, hsla(${heroHsl.h}, ${heroHsl.s}%, ${Math.max(heroHsl.l - 15, 10)}%, 0.95) 100%)`
+    : `linear-gradient(135deg, hsla(${heroHsl.h}, ${heroHsl.s}%, ${heroHsl.l}%, 0.9) 0%, hsla(${heroHsl.h}, ${heroHsl.s}%, ${Math.max(heroHsl.l - 15, 10)}%, 0.95) 100%)`
 
   const handleRemove = async (playlistSongId: string) => {
     await removeSongFromPlaylist(playlistSongId)
@@ -121,17 +136,57 @@ export function PlaylistPage({ playlistId }: PlaylistPageProps) {
   return (
     <div className="flex flex-col gap-6">
       {/* Hero header */}
-      <div className="relative overflow-hidden rounded-2xl bg-gradient-to-br from-violet-600 via-indigo-600 to-indigo-800 p-6 text-white shadow-lg sm:p-8">
+      <div
+        className="relative overflow-hidden rounded-2xl p-6 text-white shadow-lg sm:p-8"
+        style={{
+          background: heroGradient,
+          transition: "background 1s ease-out",
+        }}
+      >
+        {/* Album art mosaic / fallback */}
+        <div className="absolute inset-0 overflow-hidden">
+          {songs.length >= 4 ? (
+            /* 2x2 seamless mosaic */
+            <div className="grid h-full w-full grid-cols-2 grid-rows-2 opacity-30">
+              {songs.slice(0, 4).map((song) => (
+                <img
+                  key={song.id}
+                  src={song.cover_url}
+                  alt=""
+                  className="h-full w-full object-cover"
+                  aria-hidden="true"
+                />
+              ))}
+            </div>
+          ) : songs.length > 0 && songs[0]?.cover_url ? (
+            /* Single enlarged album art fallback */
+            <img
+              src={songs[0].cover_url}
+              alt=""
+              className="h-full w-full object-cover opacity-25"
+              aria-hidden="true"
+            />
+          ) : (
+            /* Empty playlist: gradient-only with subtle music note icon */
+            <div className="flex h-full w-full items-center justify-center opacity-10">
+              <MusicNoteIcon className="size-32" />
+            </div>
+          )}
+          {/* Gradient overlay to ensure text readability */}
+          <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-black/20 to-transparent" />
+        </div>
+
+        {/* Content */}
         <div className="relative z-10 flex flex-col gap-4">
           <div>
             {isLoading ? (
-              <div className="mb-2 h-9 w-48 animate-pulse rounded-lg bg-white/20" />
+              <div className="mb-2 h-9 w-48 animate-wave-shimmer rounded-lg bg-white/20" />
             ) : (
               <h1 className="text-3xl font-bold sm:text-4xl">{playlist?.name}</h1>
             )}
             <p className="mt-1 text-sm text-white/70">
               {isLoading ? (
-                <span className="inline-block h-4 w-24 animate-pulse rounded bg-white/20" />
+                <span className="inline-block h-4 w-24 animate-wave-shimmer rounded bg-white/20" />
               ) : (
                 `${songs.length} ${songs.length === 1 ? "song" : "songs"}`
               )}
@@ -173,17 +228,13 @@ export function PlaylistPage({ playlistId }: PlaylistPageProps) {
             </button>
           </div>
         </div>
-
-        {/* Decorative background circles */}
-        <div className="absolute -top-8 -right-8 size-48 rounded-full bg-white/5" />
-        <div className="absolute -right-4 -bottom-12 size-32 rounded-full bg-white/5" />
       </div>
 
       {/* Song table or empty state */}
       {isLoading ? (
         <div className="flex flex-col gap-2">
           {Array.from({ length: 4 }).map((_, i) => (
-            <div key={i} className="h-14 animate-pulse rounded-lg bg-gray-100 dark:bg-gray-800" />
+            <div key={i} className="h-14 animate-wave-shimmer rounded-lg bg-gray-100 dark:bg-gray-800" />
           ))}
         </div>
       ) : songs.length === 0 ? (

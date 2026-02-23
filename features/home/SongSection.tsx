@@ -40,15 +40,20 @@ function LoadingSpinner() {
 export function SongSection({ title, songs, isLoading, onSongClick, sentinelRef, isLoadingMore }: SongSectionProps) {
   return (
     <section className="mb-8">
-      <div className="mb-4 flex items-center gap-2">
-        <div className="h-5 w-1 rounded-full bg-gradient-to-b from-blue-500 to-violet-500" />
-        <h2 className="text-lg font-bold text-gray-900 dark:text-white">{title}</h2>
+      <div className="mb-4">
+        <h2 className="animate-slide-in-from-left text-lg font-bold text-gray-900 dark:text-white">{title}</h2>
+        <div
+          className="mt-1.5 h-0.5 w-24 rounded-full"
+          style={{ background: "linear-gradient(90deg, #818cf8, #c084fc, #f472b6)" }}
+        />
       </div>
       <div className="grid min-h-[160px] grid-cols-2 gap-2 sm:min-h-[200px] sm:gap-4 md:grid-cols-3 lg:grid-cols-6">
         {isLoading ? (
           Array.from({ length: 6 }, (_, i) => <SkeletonCard key={i} />)
         ) : songs.length > 0 ? (
-          songs.map((song) => <SongCard key={song.id} song={song} onClick={(s) => onSongClick(s, songs)} />)
+          songs.map((song, index) => (
+            <SongCard key={song.id} song={song} index={index} onClick={(s) => onSongClick(s, songs)} />
+          ))
         ) : (
           <div className="col-span-full flex min-h-[160px] items-center justify-center sm:min-h-[200px]">
             <p className="text-sm text-gray-400 dark:text-gray-500">No songs found</p>

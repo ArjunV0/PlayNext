@@ -150,8 +150,8 @@ export function PreSearchState({ recentSearches, onRecentClick, onRemoveRecent, 
             <h3 className="text-sm font-medium text-gray-500 dark:text-gray-400">Trending</h3>
           </div>
           <div className="grid grid-cols-2 gap-3 sm:grid-cols-3 lg:grid-cols-4">
-            {allTrending.map((song) => (
-              <SongCard key={song.id} song={song} onClick={handleTrendingPlay} />
+            {allTrending.map((song, index) => (
+              <SongCard key={song.id} song={song} index={index} onClick={handleTrendingPlay} />
             ))}
           </div>
           <div ref={sentinelRef} className="h-1" />

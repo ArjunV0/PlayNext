@@ -1,3 +1,4 @@
+import { AmbientBackground } from "features/ambient"
 import { AuthGuard } from "features/auth"
 import { Header } from "features/header"
 import { Sidebar } from "features/navigation"
@@ -7,6 +8,7 @@ import { QueuePanel } from "features/queue/QueuePanel"
 export default function AppLayout({ children }: { children: React.ReactNode }) {
   return (
     <AuthGuard>
+      <AmbientBackground />
       <Sidebar>
         <Header />
         <div className="flex">

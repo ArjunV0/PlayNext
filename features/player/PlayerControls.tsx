@@ -2,9 +2,14 @@
 
 import { useCallback, useEffect } from "react"
 
+import { Tooltip } from "components/Tooltip/Tooltip"
+
 import { usePlayer } from "./usePlayer"
 
 const SPACEBAR_KEY = " "
+
+const TOOLTIP_CLASS =
+  "glass-toast border border-white/20 text-gray-900 dark:text-white px-2.5 py-1.5 text-[11px] font-medium rounded-lg shadow-lg"
 
 function PlayIcon() {
   return (
@@ -53,14 +58,23 @@ function RepeatIcon() {
   )
 }
 
+function AutoPlayIcon() {
+  return (
+    <svg className="size-3.5" fill="currentColor" viewBox="0 0 24 24">
+      <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 14.5v-9l6 4.5-6 4.5z" />
+    </svg>
+  )
+}
+
 export function PlayerControls() {
-  const { isPlaying, volume, isAutoPlay, togglePlay, playNext, setVolume, toggleAutoPlay } = usePlayer()
+  const { isPlaying, volume, isAutoPlay, isRepeat, togglePlay, playNext, setVolume, toggleAutoPlay, toggleRepeat } =
+    usePlayer()
 
   const handleKeyDown = useCallback(
     (e: KeyboardEvent) => {
       if (e.key !== SPACEBAR_KEY) return
       const target = e.target as HTMLElement
-      if (target.tagName === "INPUT" || target.tagName === "TEXTAREA" || target.tagName === "BUTTON") return
+      if (target.tagName === "INPUT" || target.tagName === "TEXTAREA" || target.tagName === "SELECT") return
       e.preventDefault()
       togglePlay()
     },
@@ -82,41 +96,47 @@ export function PlayerControls() {
   return (
     <div className="flex shrink-0 items-center gap-1.5 sm:gap-2">
       {/* Play / Pause */}
-      <button
-        onClick={togglePlay}
-        data-testid="play-button"
-        className={`flex size-12 items-center justify-center rounded-full text-white shadow-lg shadow-violet-500/20 transition-all hover:brightness-110 ${
-          isPlaying ? "animate-pulse-glow" : ""
-        }`}
-        style={
-          {
-            background: `linear-gradient(135deg, hsl(var(--ambient-h, 271), var(--ambient-s, 81%), var(--ambient-l, 56%)), hsl(calc(var(--ambient-h, 271) + 30), var(--ambient-s, 81%), calc(var(--ambient-l, 56%) - 5%)))`,
-            "--glow-color": `hsla(var(--ambient-h, 271), var(--ambient-s, 81%), var(--ambient-l, 56%), 0.4)`,
-          } as React.CSSProperties
-        }
-        aria-label={isPlaying ? "Pause" : "Play"}
-      >
-        {isPlaying ? <PauseIcon /> : <PlayIcon />}
-      </button>
+      <Tooltip explainer={isPlaying ? "Pause" : "Play"} className={TOOLTIP_CLASS}>
+        <button
+          onClick={togglePlay}
+          data-testid="play-button"
+          className={`flex size-12 items-center justify-center rounded-full text-white shadow-lg shadow-violet-500/20 transition-all hover:brightness-110 ${
+            isPlaying ? "animate-pulse-glow" : ""
+          }`}
+          style={
+            {
+              background: `linear-gradient(135deg, hsl(var(--ambient-h, 271), var(--ambient-s, 81%), var(--ambient-l, 56%)), hsl(calc(var(--ambient-h, 271) + 30), var(--ambient-s, 81%), calc(var(--ambient-l, 56%) - 5%)))`,
+              "--glow-color": `hsla(var(--ambient-h, 271), var(--ambient-s, 81%), var(--ambient-l, 56%), 0.4)`,
+            } as React.CSSProperties
+          }
+          aria-label={isPlaying ? "Pause" : "Play"}
+        >
+          {isPlaying ? <PauseIcon /> : <PlayIcon />}
+        </button>
+      </Tooltip>
 
       {/* Next */}
-      <button
-        onClick={playNext}
-        className="flex size-8 items-center justify-center rounded-full text-gray-600 transition-colors hover:bg-gray-100 hover:text-gray-900 dark:text-gray-400 dark:hover:bg-gray-700 dark:hover:text-white"
-        aria-label="Next song"
-      >
-        <NextIcon />
-      </button>
+      <Tooltip explainer="Next" className={TOOLTIP_CLASS}>
+        <button
+          onClick={playNext}
+          className="flex size-8 items-center justify-center rounded-full text-gray-600 transition-colors hover:bg-gray-100 hover:text-gray-900 dark:text-gray-400 dark:hover:bg-gray-700 dark:hover:text-white"
+          aria-label="Next song"
+        >
+          <NextIcon />
+        </button>
+      </Tooltip>
 
       {/* Volume */}
       <div className="hidden items-center gap-1.5 sm:flex">
-        <button
-          onClick={() => setVolume(volume === 0 ? 0.7 : 0)}
-          className="flex size-8 items-center justify-center rounded-full text-gray-500 transition-colors hover:bg-gray-100 hover:text-gray-700 dark:text-gray-400 dark:hover:bg-gray-700 dark:hover:text-gray-200"
-          aria-label={volume === 0 ? "Unmute" : "Mute"}
-        >
-          <VolumeIcon volume={volume} />
-        </button>
+        <Tooltip explainer={volume === 0 ? "Unmute" : "Mute"} className={TOOLTIP_CLASS}>
+          <button
+            onClick={() => setVolume(volume === 0 ? 0.7 : 0)}
+            className="flex size-8 items-center justify-center rounded-full text-gray-500 transition-colors hover:bg-gray-100 hover:text-gray-700 dark:text-gray-400 dark:hover:bg-gray-700 dark:hover:text-gray-200"
+            aria-label={volume === 0 ? "Unmute" : "Mute"}
+          >
+            <VolumeIcon volume={volume} />
+          </button>
+        </Tooltip>
         <input
           type="range"
           min={0}
@@ -129,19 +149,37 @@ export function PlayerControls() {
         />
       </div>
 
-      {/* Auto-play toggle */}
-      <button
-        onClick={toggleAutoPlay}
-        className={`hidden items-center justify-center rounded-full p-1.5 transition-all sm:flex ${
-          isAutoPlay
-            ? "bg-blue-100 text-blue-600 shadow-sm shadow-blue-500/10 dark:bg-blue-900/50 dark:text-blue-400"
-            : "text-gray-400 hover:bg-gray-100 hover:text-gray-600 dark:hover:bg-gray-700 dark:hover:text-gray-300"
-        }`}
-        aria-label={isAutoPlay ? "Disable auto-play" : "Enable auto-play"}
-        aria-pressed={isAutoPlay}
-      >
-        <RepeatIcon />
-      </button>
+      {/* Repeat toggle — loops the current song */}
+      <Tooltip explainer={isRepeat ? "Repeat (on)" : "Repeat"} className={TOOLTIP_CLASS}>
+        <button
+          onClick={toggleRepeat}
+          className={`hidden items-center justify-center rounded-full p-1.5 transition-all sm:flex ${
+            isRepeat
+              ? "bg-blue-100 text-blue-600 shadow-sm shadow-blue-500/10 dark:bg-blue-900/50 dark:text-blue-400"
+              : "text-gray-400 hover:bg-gray-100 hover:text-gray-600 dark:hover:bg-gray-700 dark:hover:text-gray-300"
+          }`}
+          aria-label={isRepeat ? "Disable repeat" : "Enable repeat"}
+          aria-pressed={isRepeat}
+        >
+          <RepeatIcon />
+        </button>
+      </Tooltip>
+
+      {/* Auto-play toggle — auto-advance to next song */}
+      <Tooltip explainer={isAutoPlay ? "Auto-play (on)" : "Auto-play"} className={TOOLTIP_CLASS}>
+        <button
+          onClick={toggleAutoPlay}
+          className={`hidden items-center justify-center rounded-full p-1.5 transition-all sm:flex ${
+            isAutoPlay
+              ? "bg-violet-100 text-violet-600 shadow-sm shadow-violet-500/10 dark:bg-violet-900/50 dark:text-violet-400"
+              : "text-gray-400 hover:bg-gray-100 hover:text-gray-600 dark:hover:bg-gray-700 dark:hover:text-gray-300"
+          }`}
+          aria-label={isAutoPlay ? "Disable auto-play" : "Enable auto-play"}
+          aria-pressed={isAutoPlay}
+        >
+          <AutoPlayIcon />
+        </button>
+      </Tooltip>
     </div>
   )
 }

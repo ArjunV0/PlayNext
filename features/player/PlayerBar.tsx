@@ -2,9 +2,14 @@
 
 import { useEffect, useRef, useState } from "react"
 
+import { Tooltip } from "components/Tooltip/Tooltip"
+
 import { PlayerControls } from "./PlayerControls"
 import { PlayerProgress } from "./PlayerProgress"
 import { usePlayer } from "./usePlayer"
+
+const TOOLTIP_CLASS =
+  "glass-toast border border-white/20 text-gray-900 dark:text-white px-2.5 py-1.5 text-[11px] font-medium rounded-lg shadow-lg"
 
 function QueueToggleIcon() {
   return (
@@ -129,22 +134,24 @@ export function PlayerBar() {
             </div>
           </div>
           <PlayerControls />
-          <button
-            onClick={toggleQueue}
-            className={`relative ml-1 flex size-8 cursor-pointer items-center justify-center rounded-full transition-colors ${
-              isQueueOpen
-                ? "bg-blue-100 text-blue-600 dark:bg-blue-900/50 dark:text-blue-400"
-                : "text-gray-500 hover:bg-gray-100 hover:text-gray-700 dark:text-gray-400 dark:hover:bg-gray-700 dark:hover:text-gray-200"
-            }`}
-            aria-label={isQueueOpen ? "Close queue" : "Open queue"}
-          >
-            <QueueToggleIcon />
-            {upNext.length > 0 && (
-              <span className="absolute -top-1 -right-1 flex size-4 items-center justify-center rounded-full bg-blue-500 text-[10px] font-bold text-white">
-                {upNext.length > 9 ? "9+" : upNext.length}
-              </span>
-            )}
-          </button>
+          <Tooltip explainer={isQueueOpen ? "Close Queue" : "Queue"} className={TOOLTIP_CLASS}>
+            <button
+              onClick={toggleQueue}
+              className={`relative ml-1 flex size-8 cursor-pointer items-center justify-center rounded-full transition-colors ${
+                isQueueOpen
+                  ? "bg-blue-100 text-blue-600 dark:bg-blue-900/50 dark:text-blue-400"
+                  : "text-gray-500 hover:bg-gray-100 hover:text-gray-700 dark:text-gray-400 dark:hover:bg-gray-700 dark:hover:text-gray-200"
+              }`}
+              aria-label={isQueueOpen ? "Close queue" : "Open queue"}
+            >
+              <QueueToggleIcon />
+              {upNext.length > 0 && (
+                <span className="absolute -top-1 -right-1 flex size-4 items-center justify-center rounded-full bg-blue-500 text-[10px] font-bold text-white">
+                  {upNext.length > 9 ? "9+" : upNext.length}
+                </span>
+              )}
+            </button>
+          </Tooltip>
         </div>
       </div>
     </div>

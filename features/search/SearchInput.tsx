@@ -1,8 +1,11 @@
 "use client"
 
+import { useEffect, useRef, useState } from "react"
 import { useRouter, usePathname } from "next/navigation"
 
 import { useSearch } from "./useSearch"
+
+const SEARCH_DEBOUNCE_MS = 300
 
 function SearchIcon() {
   return (
@@ -42,44 +45,88 @@ export function SearchInput() {
   const { query, setQuery, isLoading } = useSearch()
   const router = useRouter()
   const pathname = usePathname()
-  const isQueryEmpty = query.trim() === ""
+  const [localValue, setLocalValue] = useState(query)
+  const [isFocused, setIsFocused] = useState(false)
+  const debounceRef = useRef<ReturnType<typeof setTimeout> | null>(null)
+  const isTypingRef = useRef(false)
+  const isQueryEmpty = localValue.trim() === ""
   const isOnSearch = pathname === "/search"
 
-  const handleChange = (value: string) => {
-    setQuery(value)
-    const trimmed = value.trim()
-    if (trimmed) {
-      const url = `/search?q=${encodeURIComponent(trimmed)}`
-      if (isOnSearch) {
-        router.replace(url, { scroll: false })
-      } else {
-        router.push(url, { scroll: false })
-      }
-    } else if (isOnSearch) {
-      router.replace("/search", { scroll: false })
+  // Sync local value only when context query changes externally (e.g. recent search click),
+  // NOT when our own debounce pushes to context (which would overwrite mid-typing state)
+  useEffect(() => {
+    if (!isTypingRef.current) {
+      setLocalValue(query)
     }
+  }, [query])
+
+  const handleChange = (value: string) => {
+    // Update LOCAL state immediately — only this component re-renders
+    setLocalValue(value)
+    isTypingRef.current = true
+
+    // Debounce both context update AND router navigation
+    if (debounceRef.current) {
+      clearTimeout(debounceRef.current)
+    }
+    debounceRef.current = setTimeout(() => {
+      isTypingRef.current = false
+      const trimmed = value.trim()
+      setQuery(trimmed)
+      if (trimmed) {
+        const url = `/search?q=${encodeURIComponent(trimmed)}`
+        if (isOnSearch) {
+          router.replace(url, { scroll: false })
+        } else {
+          router.push(url, { scroll: false })
+        }
+      } else if (isOnSearch) {
+        router.replace("/search", { scroll: false })
+      }
+    }, SEARCH_DEBOUNCE_MS)
   }
 
   const handleClear = () => {
+    if (debounceRef.current) {
+      clearTimeout(debounceRef.current)
+    }
+    isTypingRef.current = false
+    setLocalValue("")
     setQuery("")
     if (isOnSearch) {
       router.replace("/search", { scroll: false })
     }
   }
 
+  const focusedBorder = "1px solid hsla(var(--ambient-h, 240), var(--ambient-s, 70%), var(--ambient-l, 60%), 0.5)"
+  const defaultBorder = "1px solid rgba(229, 231, 235, 0.6)"
+  const focusedBoxShadow =
+    "0 0 0 2px hsla(var(--ambient-h, 240), var(--ambient-s, 70%), var(--ambient-l, 60%), 0.4), 0 0 15px hsla(var(--ambient-h, 240), var(--ambient-s, 70%), var(--ambient-l, 60%), 0.15)"
+
   return (
     <div className="relative w-full">
-      <div className="relative">
+      {/* Visual container: holds border, bg, glow, scale */}
+      <div
+        className="relative rounded-xl bg-gray-50/80 dark:bg-gray-800/80"
+        style={{
+          border: isFocused ? focusedBorder : defaultBorder,
+          boxShadow: isFocused ? focusedBoxShadow : "none",
+          transform: isFocused ? "scale(1.01)" : "scale(1)",
+          transition: "none",
+        }}
+      >
         {/* Search icon */}
         <span className="pointer-events-none absolute top-1/2 left-3.5 -translate-y-1/2">
           <SearchIcon />
         </span>
         <input
           type="text"
-          value={query}
+          value={localValue}
           onChange={(e) => handleChange(e.target.value)}
+          onFocus={() => setIsFocused(true)}
+          onBlur={() => setIsFocused(false)}
           placeholder="Search songs or artists..."
-          className="w-full rounded-xl border border-gray-200/60 bg-gray-50/80 py-2.5 pr-10 pl-10 text-sm text-gray-900 placeholder-gray-400 transition-all focus:border-blue-500/50 focus:bg-white focus:shadow-lg focus:ring-1 focus:shadow-blue-500/5 focus:ring-blue-500/30 focus:outline-none dark:border-gray-600/60 dark:bg-gray-800/80 dark:text-white dark:placeholder-gray-500 dark:focus:border-blue-400/50 dark:focus:bg-gray-800 dark:focus:shadow-blue-500/5"
+          className="w-full rounded-xl bg-transparent py-2.5 pr-10 pl-10 text-sm text-gray-900 placeholder-gray-400 focus:outline-none dark:text-white dark:placeholder-gray-500"
         />
         {/* Clear button or loading indicator */}
         {isLoading ? (

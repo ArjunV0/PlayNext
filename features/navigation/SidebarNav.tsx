@@ -75,10 +75,10 @@ export function SidebarNav() {
               <li key={href}>
                 <Link
                   href={resolvedHref}
-                  className={`flex items-center gap-3 rounded-lg px-3 py-2.5 text-sm font-medium transition-colors ${
+                  className={`flex items-center gap-3 rounded-lg px-3 py-2.5 text-sm font-medium ${
                     isActive
-                      ? "border-l-[3px] border-amber-500 bg-amber-500/10 pl-[9px] font-semibold text-gray-900 dark:text-white"
-                      : "text-gray-600 hover:bg-gray-100 hover:text-gray-900 dark:text-gray-400 dark:hover:bg-gray-800 dark:hover:text-white"
+                      ? "bg-gradient-to-r from-violet-500/20 to-indigo-500/10 font-semibold text-gray-900 dark:text-white"
+                      : "text-gray-600 transition-all duration-200 hover:translate-x-1 hover:bg-gray-100 hover:text-gray-900 dark:text-gray-400 dark:hover:bg-gray-800 dark:hover:text-white"
                   }`}
                 >
                   <Icon className="size-5" />
@@ -91,7 +91,7 @@ export function SidebarNav() {
       </nav>
 
       {/* Divider */}
-      <div className="mx-4 shrink-0 border-t border-gray-200 dark:border-gray-700" />
+      <div className="mx-4 shrink-0 border-t border-white/20 dark:border-white/10" />
 
       {/* Playlists section (scrollable) */}
       <div className="flex min-h-0 flex-1 flex-col overflow-hidden p-4 pt-3">
@@ -125,10 +125,10 @@ export function SidebarNav() {
                 <li key={playlist.id}>
                   <Link
                     href={`/playlist/${playlist.id}`}
-                    className={`flex items-center gap-2 rounded-lg px-3 py-2 text-sm transition-colors ${
+                    className={`flex items-center gap-2 rounded-lg px-3 py-2 text-sm ${
                       isActive
-                        ? "border-l-[3px] border-amber-500 bg-amber-500/10 pl-[9px] font-semibold text-gray-900 dark:text-white"
-                        : "text-gray-600 hover:bg-gray-100 hover:text-gray-900 dark:text-gray-400 dark:hover:bg-gray-800 dark:hover:text-white"
+                        ? "bg-gradient-to-r from-violet-500/20 to-indigo-500/10 font-semibold text-gray-900 dark:text-white"
+                        : "text-gray-600 transition-all duration-200 hover:translate-x-1 hover:bg-gray-100 hover:text-gray-900 dark:text-gray-400 dark:hover:bg-gray-800 dark:hover:text-white"
                     }`}
                   >
                     <MusicNoteIcon className="size-4 shrink-0" />

@@ -44,12 +44,12 @@ export function Sidebar({ children }: { children: React.ReactNode }) {
       <Dialog.Portal>
         <Dialog.Overlay className="data-[state=open]:animate-fade-in data-[state=closed]:animate-fade-out fixed inset-0 z-40 bg-black/40" />
         <Dialog.Content
-          className="data-[state=open]:animate-slide-in-left data-[state=closed]:animate-slide-out-left fixed inset-y-0 left-0 z-50 flex w-[250px] flex-col border-r border-gray-200 bg-white shadow-2xl dark:border-gray-700 dark:bg-gray-900"
+          className="data-[state=open]:animate-slide-in-left data-[state=closed]:animate-slide-out-left glass-sidebar sidebar-edge-line fixed inset-y-0 left-0 z-50 flex w-[250px] flex-col shadow-2xl"
           aria-describedby={undefined}
         >
           <Dialog.Title className="sr-only">Navigation menu</Dialog.Title>
           <SidebarNav />
-          <div className="mt-auto border-t border-gray-200 dark:border-gray-700">
+          <div className="mt-auto border-t border-white/20 dark:border-white/10">
             <SidebarProfile />
           </div>
         </Dialog.Content>

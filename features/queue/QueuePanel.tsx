@@ -3,6 +3,17 @@
 import { usePlayer } from "features/player/usePlayer"
 import type { Song } from "lib/types"
 
+const STAGGER_CLASSES = [
+  "delay-stagger-1",
+  "delay-stagger-2",
+  "delay-stagger-3",
+  "delay-stagger-4",
+  "delay-stagger-5",
+  "delay-stagger-6",
+  "delay-stagger-7",
+  "delay-stagger-8",
+] as const
+
 function QueueIcon() {
   return (
     <svg className="size-4" fill="currentColor" viewBox="0 0 24 24">
@@ -39,7 +50,11 @@ function QueueItem({
   onRemove: (index: number) => void
 }) {
   return (
-    <div className="group flex items-center gap-3 rounded-lg px-3 py-2 transition-colors hover:bg-gray-100/60 dark:hover:bg-gray-800/60">
+    <div
+      className={`group animate-stagger-fade-in flex items-center gap-3 rounded-lg px-3 py-2 transition-colors ${
+        STAGGER_CLASSES[Math.min(index, 7)]
+      } ${index === 0 ? "now-playing-glow" : "hover:bg-gray-100/60 dark:hover:bg-gray-800/60"}`}
+    >
       <img
         src={song.coverUrl}
         alt={song.title}
@@ -79,12 +94,12 @@ export function QueuePanel() {
         />
       )}
       <div
-        className={`fixed top-0 right-0 z-50 flex h-full w-80 flex-col border-l border-white/20 bg-white/90 shadow-2xl backdrop-blur-xl transition-transform duration-300 ease-out dark:border-gray-700/50 dark:bg-gray-900/90 ${
+        className={`fixed top-0 right-0 z-50 flex h-full w-80 flex-col border-l border-white/15 bg-white/70 shadow-2xl backdrop-blur-xl transition-transform duration-300 ease-out dark:border-white/10 dark:bg-gray-900/70 ${
           isQueueOpen ? "translate-x-0" : "translate-x-full"
         }`}
         style={{ paddingBottom: "5rem" }}
       >
-        <div className="flex items-center justify-between border-b border-gray-200/50 px-4 py-3 dark:border-gray-700/50">
+        <div className="flex items-center justify-between border-b border-white/15 px-4 py-3 dark:border-white/10">
           <div className="flex items-center gap-2">
             <QueueIcon />
             <h2 className="text-sm font-semibold text-gray-900 dark:text-white">Up Next</h2>

@@ -13,6 +13,7 @@ interface PlayerContextValue {
   duration: number
   volume: number
   isAutoPlay: boolean
+  isRepeat: boolean
   isQueueOpen: boolean
   isShuffle: boolean
   playSong: (song: Song, contextSongs: Song[]) => void
@@ -22,6 +23,7 @@ interface PlayerContextValue {
   seek: (time: number) => void
   setVolume: (volume: number) => void
   toggleAutoPlay: () => void
+  toggleRepeat: () => void
   toggleShuffle: () => void
   addToQueue: (song: Song) => void
   removeFromQueue: (index: number) => void
@@ -56,31 +58,48 @@ function attachAudioListeners(
 export function PlayerProvider({ children }: { children: React.ReactNode }) {
   const [currentSong, setCurrentSong] = useState<Song | null>(null)
   const [manualQueue, setManualQueue] = useState<Song[]>([])
+  // contextQueue holds ALL songs from the current context (stable, index-based)
   const [contextQueue, setContextQueue] = useState<Song[]>([])
+  const [contextIndex, setContextIndex] = useState(-1)
   const [isPlaying, setIsPlaying] = useState(false)
   const [currentTime, setCurrentTime] = useState(0)
   const [duration, setDuration] = useState(0)
   const [volume, setVolumeState] = useState(1)
   const [isAutoPlay, setIsAutoPlay] = useState(true)
+  const [isRepeat, setIsRepeat] = useState(false)
   const [isQueueOpen, setIsQueueOpen] = useState(false)
   const [isShuffle, setIsShuffle] = useState(false)
   const audioRef = useRef<HTMLAudioElement | null>(null)
+  const playPromiseRef = useRef<Promise<void> | undefined>(undefined)
   const isAutoPlayRef = useRef(true)
+  const isRepeatRef = useRef(false)
   const isShuffleRef = useRef(false)
   const volumeRef = useRef(1)
   const manualQueueRef = useRef<Song[]>([])
   const contextQueueRef = useRef<Song[]>([])
+  const contextIndexRef = useRef(-1)
   const contextSourceRef = useRef<Song[]>([])
 
-  const upNext = useMemo(() => [...manualQueue, ...contextQueue], [manualQueue, contextQueue])
+  // upNext shows manual queue items first, then upcoming context songs (after current index)
+  const upNext = useMemo(
+    () => [...manualQueue, ...contextQueue.slice(contextIndex + 1)],
+    [manualQueue, contextQueue, contextIndex]
+  )
 
   const stopAudio = useCallback(() => {
     if (!audioRef.current) return
-    audioRef.current.pause()
-    audioRef.current.ontimeupdate = null
-    audioRef.current.onloadedmetadata = null
-    audioRef.current.onended = null
+    const audio = audioRef.current
+    audio.ontimeupdate = null
+    audio.onloadedmetadata = null
+    audio.onended = null
     audioRef.current = null
+    const pending = playPromiseRef.current
+    playPromiseRef.current = undefined
+    if (pending) {
+      pending.then(() => audio.pause()).catch(() => {})
+    } else {
+      audio.pause()
+    }
   }, [])
 
   const startAudio = useCallback(
@@ -95,43 +114,56 @@ export function PlayerProvider({ children }: { children: React.ReactNode }) {
       attachAudioListeners(audio, setCurrentTime, setDuration)
 
       audio.onended = () => {
+        // Repeat: replay the current song
+        if (isRepeatRef.current) {
+          startAudio(song)
+          return
+        }
+
         if (!isAutoPlayRef.current) {
           setIsPlaying(false)
           return
         }
+
+        // Manual queue takes priority
         const manualNext = manualQueueRef.current[0]
         if (manualNext) {
           const rest = manualQueueRef.current.slice(1)
           manualQueueRef.current = rest
           setManualQueue(rest)
-          setCurrentSong(manualNext)
           startAudio(manualNext)
           return
         }
-        const contextNext = contextQueueRef.current[0]
-        if (contextNext) {
-          const rest = contextQueueRef.current.slice(1)
-          contextQueueRef.current = rest
-          setContextQueue(rest)
-          setCurrentSong(contextNext)
-          startAudio(contextNext)
+
+        // Advance context index
+        const nextIndex = contextIndexRef.current + 1
+        const contextSongs = contextQueueRef.current
+        if (nextIndex < contextSongs.length) {
+          contextIndexRef.current = nextIndex
+          setContextIndex(nextIndex)
+          const nextSong = contextSongs[nextIndex] as Song
+          startAudio(nextSong)
           return
         }
+
+        // Exhausted context queue — loop from beginning via source
         const source = contextSourceRef.current
         if (source.length > 0) {
-          const loopFirst = source[0] as Song
-          const loopRest = isShuffleRef.current ? shuffleArray(source.slice(1)) : source.slice(1)
-          contextQueueRef.current = loopRest
-          setContextQueue(loopRest)
-          startAudio(loopFirst)
+          const ordered = isShuffleRef.current ? shuffleArray(source) : source
+          contextQueueRef.current = ordered
+          setContextQueue(ordered)
+          contextIndexRef.current = 0
+          setContextIndex(0)
+          startAudio(ordered[0] as Song)
           return
         }
+
         setIsPlaying(false)
       }
 
       setCurrentSong(song)
       setIsPlaying(true)
-      audio.play()
+      playPromiseRef.current = audio.play().catch(() => {})
     },
     [stopAudio]
   )
@@ -139,11 +171,16 @@ export function PlayerProvider({ children }: { children: React.ReactNode }) {
   const playSong = useCallback(
     (song: Song, contextSongs: Song[]) => {
       const songIndex = contextSongs.findIndex((s) => s.id === song.id)
-      const remaining = songIndex >= 0 ? contextSongs.slice(songIndex + 1) : []
-      const ordered = isShuffleRef.current ? shuffleArray(remaining) : remaining
+      // Store the full ordered list (shuffle applies to the full set)
+      const ordered = isShuffleRef.current ? shuffleArray(contextSongs) : contextSongs
+      const playIndex = isShuffleRef.current
+        ? ordered.findIndex((s) => s.id === song.id)
+        : Math.max(0, songIndex)
       contextSourceRef.current = contextSongs
       contextQueueRef.current = ordered
+      contextIndexRef.current = playIndex
       setContextQueue(ordered)
+      setContextIndex(playIndex)
       startAudio(song)
     },
     [startAudio]
@@ -159,22 +196,28 @@ export function PlayerProvider({ children }: { children: React.ReactNode }) {
       startAudio(manualNext)
       return
     }
-    const contextNext = contextQueueRef.current[0]
-    if (contextNext) {
-      const rest = contextQueueRef.current.slice(1)
-      contextQueueRef.current = rest
-      setContextQueue(rest)
-      startAudio(contextNext)
+    const nextIndex = contextIndexRef.current + 1
+    const contextSongs = contextQueueRef.current
+    if (nextIndex < contextSongs.length) {
+      contextIndexRef.current = nextIndex
+      setContextIndex(nextIndex)
+      startAudio(contextSongs[nextIndex] as Song)
     }
   }, [currentSong, startAudio])
 
   const togglePlay = useCallback(() => {
     if (!audioRef.current) return
     if (isPlaying) {
-      audioRef.current.pause()
+      const pending = playPromiseRef.current
+      playPromiseRef.current = undefined
+      if (pending) {
+        pending.then(() => audioRef.current?.pause()).catch(() => {})
+      } else {
+        audioRef.current.pause()
+      }
       setIsPlaying(false)
     } else {
-      audioRef.current.play()
+      playPromiseRef.current = audioRef.current.play().catch(() => {})
       setIsPlaying(true)
     }
   }, [isPlaying])
@@ -207,14 +250,43 @@ export function PlayerProvider({ children }: { children: React.ReactNode }) {
     })
   }, [])
 
+  const toggleRepeat = useCallback(() => {
+    setIsRepeat((prev) => {
+      isRepeatRef.current = !prev
+      return !prev
+    })
+  }, [])
+
   const toggleShuffle = useCallback(() => {
     setIsShuffle((prev) => {
       const next = !prev
       isShuffleRef.current = next
-      if (next && contextQueueRef.current.length > 0) {
-        const shuffled = shuffleArray(contextQueueRef.current)
-        contextQueueRef.current = shuffled
-        setContextQueue(shuffled)
+      if (contextQueueRef.current.length > 0) {
+        if (next) {
+          // Shuffle: keep current song at contextIndex, shuffle the rest around it
+          const current = contextQueueRef.current[contextIndexRef.current]
+          const before = contextQueueRef.current.slice(0, contextIndexRef.current)
+          const after = contextQueueRef.current.slice(contextIndexRef.current + 1)
+          const shuffledAfter = shuffleArray(after)
+          const shuffled = [...before, ...(current ? [current] : []), ...shuffledAfter]
+          contextQueueRef.current = shuffled
+          setContextQueue(shuffled)
+        } else {
+          // Un-shuffle: restore original source order, find current song's new position
+          const source = contextSourceRef.current
+          if (source.length > 0) {
+            const currentSongInQueue = contextQueueRef.current[contextIndexRef.current]
+            contextQueueRef.current = source
+            setContextQueue(source)
+            if (currentSongInQueue) {
+              const newIndex = source.findIndex((s) => s.id === currentSongInQueue.id)
+              if (newIndex >= 0) {
+                contextIndexRef.current = newIndex
+                setContextIndex(newIndex)
+              }
+            }
+          }
+        }
       }
       return next
     })
@@ -237,9 +309,10 @@ export function PlayerProvider({ children }: { children: React.ReactNode }) {
         return updated
       })
     } else {
-      const contextIndex = index - manualLen
+      // upNext shows contextQueue.slice(contextIndexRef.current + 1), so offset by that
+      const offsetInContext = index - manualLen + contextIndexRef.current + 1
       setContextQueue((prev) => {
-        const updated = prev.filter((_, i) => i !== contextIndex)
+        const updated = prev.filter((_, i) => i !== offsetInContext)
         contextQueueRef.current = updated
         return updated
       })
@@ -249,8 +322,11 @@ export function PlayerProvider({ children }: { children: React.ReactNode }) {
   const clearQueue = useCallback(() => {
     manualQueueRef.current = []
     contextQueueRef.current = []
+    contextIndexRef.current = -1
+    contextSourceRef.current = []
     setManualQueue([])
     setContextQueue([])
+    setContextIndex(-1)
   }, [])
 
   const toggleQueue = useCallback(() => {
@@ -267,6 +343,7 @@ export function PlayerProvider({ children }: { children: React.ReactNode }) {
       duration,
       volume,
       isAutoPlay,
+      isRepeat,
       isQueueOpen,
       isShuffle,
       playSong,
@@ -276,6 +353,7 @@ export function PlayerProvider({ children }: { children: React.ReactNode }) {
       seek,
       setVolume,
       toggleAutoPlay,
+      toggleRepeat,
       toggleShuffle,
       addToQueue,
       removeFromQueue,
@@ -291,6 +369,7 @@ export function PlayerProvider({ children }: { children: React.ReactNode }) {
       duration,
       volume,
       isAutoPlay,
+      isRepeat,
       isQueueOpen,
       isShuffle,
       playSong,
@@ -300,6 +379,7 @@ export function PlayerProvider({ children }: { children: React.ReactNode }) {
       seek,
       setVolume,
       toggleAutoPlay,
+      toggleRepeat,
       toggleShuffle,
       addToQueue,
       removeFromQueue,

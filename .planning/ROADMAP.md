@@ -159,11 +159,11 @@ Plans:
   4. The progress bar track uses a vivid gradient (indigo to violet to pink) and the thumb dot is always visible while a song is playing — not only on hover
   5. The play/pause button is visibly larger than surrounding controls and shows a pulsing glow effect while audio is playing
   6. The player bar background carries a subtle tint matching the ambient color of the currently playing song
-**Plans**: TBD
+**Plans**: 2 plans
 
 Plans:
-- [ ] 08-01: PlayerBar structural upgrades (vinyl ring, enlarged art, gradient border, ambient tint, data-testid attributes for existing Playwright selectors)
-- [ ] 08-02: PlayerProgress vivid gradient + persistent thumb, PlayerControls larger play button + pulse-glow animation
+- [ ] 08-01-PLAN.md -- PlayerBar structural upgrades (vinyl ring, enlarged art, gradient border, marquee text, ambient tint, data-testid attributes)
+- [ ] 08-02-PLAN.md -- PlayerProgress vivid gradient + persistent thumb, PlayerControls larger play button + pulse-glow animation
 
 ### Phase 9: Song Cards and Home
 **Goal**: The home page grid of song cards feels alive — cards stagger into view on load, respond expressively to hover, and each section is visually anchored by a decorative header treatment

@@ -1,41 +1,12 @@
 "use client"
 
 import * as RadixTooltip from "@radix-ui/react-tooltip"
-import { cva, type VariantProps } from "class-variance-authority"
 import React from "react"
 import { twMerge } from "tailwind-merge"
 
-const tooltipContent = cva([], {
-  variants: {
-    intent: {
-      primary: ["rounded-md", "bg-zinc-700", "font-sans", "text-white"],
-    },
-    size: {
-      md: ["px-4", "py-2.5", "text-xs"],
-    },
-  },
-  defaultVariants: {
-    intent: "primary",
-    size: "md",
-  },
-})
+const DEFAULT_CLASS = "z-[200] rounded-md px-3 py-1.5 font-sans text-xs text-white bg-gray-800 dark:bg-gray-700"
 
-const tooltipArrow = cva([], {
-  variants: {
-    intent: {
-      primary: ["fill-zinc-700"],
-    },
-    size: {
-      md: ["w-4", "h-2"],
-    },
-  },
-  defaultVariants: {
-    intent: "primary",
-    size: "md",
-  },
-})
-
-export interface TooltipProps extends VariantProps<typeof tooltipContent>, RadixTooltip.TooltipProps {
+export interface TooltipProps extends RadixTooltip.TooltipProps {
   explainer: React.ReactElement | string
   children: React.ReactElement
   className?: string
@@ -49,27 +20,19 @@ export function Tooltip({
   open,
   defaultOpen,
   onOpenChange,
-  intent,
-  size,
   side = "top",
   className,
   withArrow,
 }: TooltipProps) {
   return (
-    <RadixTooltip.Provider>
-      <RadixTooltip.Root open={open} defaultOpen={defaultOpen} onOpenChange={onOpenChange} delayDuration={200}>
-        <RadixTooltip.Trigger asChild>{children}</RadixTooltip.Trigger>
-        <RadixTooltip.Portal>
-          <RadixTooltip.Content
-            side={side}
-            sideOffset={5}
-            className={twMerge(tooltipContent({ intent, size, className }))}
-          >
-            {explainer}
-            {withArrow ? <RadixTooltip.Arrow className={twMerge(tooltipArrow({ intent, size, className }))} /> : null}
-          </RadixTooltip.Content>
-        </RadixTooltip.Portal>
-      </RadixTooltip.Root>
-    </RadixTooltip.Provider>
+    <RadixTooltip.Root open={open} defaultOpen={defaultOpen} onOpenChange={onOpenChange} delayDuration={200}>
+      <RadixTooltip.Trigger asChild>{children}</RadixTooltip.Trigger>
+      <RadixTooltip.Portal>
+        <RadixTooltip.Content side={side} sideOffset={8} className={twMerge(DEFAULT_CLASS, className)}>
+          {explainer}
+          {withArrow ? <RadixTooltip.Arrow className="fill-zinc-700" /> : null}
+        </RadixTooltip.Content>
+      </RadixTooltip.Portal>
+    </RadixTooltip.Root>
   )
 }

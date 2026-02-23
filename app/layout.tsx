@@ -2,6 +2,8 @@ import type { Metadata } from "next"
 import { Inter } from "next/font/google"
 import "styles/tailwind.css"
 
+import * as RadixTooltip from "@radix-ui/react-tooltip"
+
 import { AuthProvider } from "features/auth"
 import { PlayerProvider } from "features/player/PlayerContext"
 import { PlaylistProvider } from "features/playlist"
@@ -24,17 +26,19 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
   return (
     <html lang="en" className={inter.variable} suppressHydrationWarning>
       <body className="bg-white font-sans text-gray-900 dark:bg-gray-900 dark:text-white">
-        <ThemeProvider>
-          <ToastProvider>
-            <AuthProvider>
-              <PlayerProvider>
-                <PlaylistProvider>
-                  <SearchProvider>{children}</SearchProvider>
-                </PlaylistProvider>
-              </PlayerProvider>
-            </AuthProvider>
-          </ToastProvider>
-        </ThemeProvider>
+        <RadixTooltip.Provider delayDuration={200}>
+          <ThemeProvider>
+            <ToastProvider>
+              <AuthProvider>
+                <PlayerProvider>
+                  <PlaylistProvider>
+                    <SearchProvider>{children}</SearchProvider>
+                  </PlaylistProvider>
+                </PlayerProvider>
+              </AuthProvider>
+            </ToastProvider>
+          </ThemeProvider>
+        </RadixTooltip.Provider>
       </body>
     </html>
   )

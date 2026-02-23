@@ -10,7 +10,7 @@ export function Header() {
       <div className="mx-auto max-w-screen-xl px-4 py-3">
         <div className="flex items-center gap-3">
           <SidebarTrigger />
-          <h1 className="text-gradient shrink-0 text-lg font-bold">PlayNext</h1>
+          <h1 className="text-gradient-vivid shrink-0 text-lg font-bold">PlayNext</h1>
           <div className="hidden flex-1 sm:block">
             <SearchInput />
           </div>

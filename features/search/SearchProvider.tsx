@@ -3,7 +3,7 @@
 import { createContext, useCallback, useEffect, useMemo, useRef, useState } from "react"
 
 import type { Song } from "lib/types"
-import { DEBOUNCE_DELAY_MS, MAX_RECENT_SEARCHES, RECENT_SEARCHES_KEY } from "./types"
+import { MIN_QUERY_LENGTH, MAX_RECENT_SEARCHES, RECENT_SEARCHES_KEY } from "./types"
 
 export interface SearchContextValue {
   query: string
@@ -45,7 +45,7 @@ export function SearchProvider({ children }: { children: React.ReactNode }) {
   const [isLoading, setIsLoading] = useState(false)
   const [recentSearches, setRecentSearches] = useState<string[]>([])
   const [totalCount, setTotalCount] = useState(0)
-  const debounceRef = useRef<ReturnType<typeof setTimeout> | null>(null)
+  const abortRef = useRef<AbortController | null>(null)
 
   const clearResults = useCallback(() => {
     setResults([])
@@ -86,21 +86,21 @@ export function SearchProvider({ children }: { children: React.ReactNode }) {
   }, [])
 
   useEffect(() => {
-    if (debounceRef.current) {
-      clearTimeout(debounceRef.current)
-    }
-
     const trimmed = query.trim()
-    if (!trimmed) {
+    if (!trimmed || trimmed.length < MIN_QUERY_LENGTH) {
       setResults([])
       setIsLoading(false)
       return
     }
 
-    setIsLoading(true)
+    // Abort any in-flight request
+    abortRef.current?.abort()
     const controller = new AbortController()
+    abortRef.current = controller
 
-    debounceRef.current = setTimeout(async () => {
+    setIsLoading(true)
+
+    async function fetchResults() {
       try {
         const params = new URLSearchParams({ q: trimmed })
         const response = await fetch(`/api/search?${params.toString()}`, { signal: controller.signal })
@@ -113,14 +113,10 @@ export function SearchProvider({ children }: { children: React.ReactNode }) {
         if (e instanceof DOMException && e.name === "AbortError") return
         setIsLoading(false)
       }
-    }, DEBOUNCE_DELAY_MS)
-
-    return () => {
-      if (debounceRef.current) {
-        clearTimeout(debounceRef.current)
-      }
-      controller.abort()
     }
+    void fetchResults()
+
+    return () => controller.abort()
   }, [query])
 
   return <SearchContext.Provider value={value}>{children}</SearchContext.Provider>

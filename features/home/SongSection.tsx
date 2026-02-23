@@ -15,9 +15,9 @@ interface SongSectionProps {
 function SkeletonCard() {
   return (
     <div className="rounded-xl bg-gray-50 p-3 dark:bg-gray-800">
-      <div className="animate-shimmer aspect-square w-full rounded-lg bg-gray-200 dark:bg-gray-700" />
-      <div className="animate-shimmer mt-2 h-4 w-3/4 rounded bg-gray-200 dark:bg-gray-700" />
-      <div className="animate-shimmer mt-1 h-3 w-1/2 rounded bg-gray-200 dark:bg-gray-700" />
+      <div className="animate-wave-shimmer aspect-square w-full rounded-lg bg-gray-200 dark:bg-gray-700" />
+      <div className="animate-wave-shimmer mt-2 h-4 w-3/4 rounded bg-gray-200 dark:bg-gray-700" />
+      <div className="animate-wave-shimmer mt-1 h-3 w-1/2 rounded bg-gray-200 dark:bg-gray-700" />
     </div>
   )
 }

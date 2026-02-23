@@ -59,7 +59,7 @@ export function ToastProvider({ children }: { children: React.ReactNode }) {
       }, TOAST_DURATION_MS)
       timersRef.current.set(id, timer)
     },
-    [dismissToast],
+    [dismissToast]
   )
 
   return (

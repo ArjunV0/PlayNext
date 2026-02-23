@@ -91,8 +91,12 @@ export function PlaylistPage({ playlistId }: PlaylistPageProps) {
   const isPlayingFromPlaylist = Boolean(currentSong && songs.some((s) => s.song_id === currentSong.id))
 
   const heroGradient = isPlayingFromPlaylist
-    ? `linear-gradient(135deg, hsla(var(--ambient-h, ${heroHsl.h}), var(--ambient-s, ${heroHsl.s}%), var(--ambient-l, ${heroHsl.l}%), 0.9) 0%, hsla(${heroHsl.h}, ${heroHsl.s}%, ${Math.max(heroHsl.l - 15, 10)}%, 0.95) 100%)`
-    : `linear-gradient(135deg, hsla(${heroHsl.h}, ${heroHsl.s}%, ${heroHsl.l}%, 0.9) 0%, hsla(${heroHsl.h}, ${heroHsl.s}%, ${Math.max(heroHsl.l - 15, 10)}%, 0.95) 100%)`
+    ? `linear-gradient(135deg, hsla(var(--ambient-h, ${heroHsl.h}), var(--ambient-s, ${heroHsl.s}%), var(--ambient-l, ${
+        heroHsl.l
+      }%), 0.9) 0%, hsla(${heroHsl.h}, ${heroHsl.s}%, ${Math.max(heroHsl.l - 15, 10)}%, 0.95) 100%)`
+    : `linear-gradient(135deg, hsla(${heroHsl.h}, ${heroHsl.s}%, ${heroHsl.l}%, 0.9) 0%, hsla(${heroHsl.h}, ${
+        heroHsl.s
+      }%, ${Math.max(heroHsl.l - 15, 10)}%, 0.95) 100%)`
 
   const handleRemove = async (playlistSongId: string) => {
     await removeSongFromPlaylist(playlistSongId)
@@ -160,12 +164,7 @@ export function PlaylistPage({ playlistId }: PlaylistPageProps) {
             </div>
           ) : songs.length > 0 && songs[0]?.cover_url ? (
             /* Single enlarged album art fallback */
-            <img
-              src={songs[0].cover_url}
-              alt=""
-              className="h-full w-full object-cover opacity-25"
-              aria-hidden="true"
-            />
+            <img src={songs[0].cover_url} alt="" className="h-full w-full object-cover opacity-25" aria-hidden="true" />
           ) : (
             /* Empty playlist: gradient-only with subtle music note icon */
             <div className="flex h-full w-full items-center justify-center opacity-10">
@@ -180,13 +179,13 @@ export function PlaylistPage({ playlistId }: PlaylistPageProps) {
         <div className="relative z-10 flex flex-col gap-4">
           <div>
             {isLoading ? (
-              <div className="mb-2 h-9 w-48 animate-wave-shimmer rounded-lg bg-white/20" />
+              <div className="animate-wave-shimmer mb-2 h-9 w-48 rounded-lg bg-white/20" />
             ) : (
               <h1 className="text-3xl font-bold sm:text-4xl">{playlist?.name}</h1>
             )}
             <p className="mt-1 text-sm text-white/70">
               {isLoading ? (
-                <span className="inline-block h-4 w-24 animate-wave-shimmer rounded bg-white/20" />
+                <span className="animate-wave-shimmer inline-block h-4 w-24 rounded bg-white/20" />
               ) : (
                 `${songs.length} ${songs.length === 1 ? "song" : "songs"}`
               )}
@@ -234,7 +233,7 @@ export function PlaylistPage({ playlistId }: PlaylistPageProps) {
       {isLoading ? (
         <div className="flex flex-col gap-2">
           {Array.from({ length: 4 }).map((_, i) => (
-            <div key={i} className="h-14 animate-wave-shimmer rounded-lg bg-gray-100 dark:bg-gray-800" />
+            <div key={i} className="animate-wave-shimmer h-14 rounded-lg bg-gray-100 dark:bg-gray-800" />
           ))}
         </div>
       ) : songs.length === 0 ? (

@@ -8,10 +8,10 @@ export function SidebarProfile() {
   if (isLoading) {
     return (
       <div className="flex items-center gap-3 p-4">
-        <div className="size-9 shrink-0 animate-wave-shimmer rounded-full bg-gray-200 dark:bg-gray-700" />
+        <div className="animate-wave-shimmer size-9 shrink-0 rounded-full bg-gray-200 dark:bg-gray-700" />
         <div className="flex-1 space-y-1.5">
-          <div className="h-3.5 w-24 animate-wave-shimmer rounded bg-gray-200 dark:bg-gray-700" />
-          <div className="h-3 w-14 animate-wave-shimmer rounded bg-gray-200 dark:bg-gray-700" />
+          <div className="animate-wave-shimmer h-3.5 w-24 rounded bg-gray-200 dark:bg-gray-700" />
+          <div className="animate-wave-shimmer h-3 w-14 rounded bg-gray-200 dark:bg-gray-700" />
         </div>
       </div>
     )

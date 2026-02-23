@@ -195,6 +195,15 @@
   }
 }
 
+@keyframes marquee {
+  0% {
+    transform: translateX(0);
+  }
+  100% {
+    transform: translateX(-100%);
+  }
+}
+
 /* --- Utility Classes --- */
 
 @layer utilities {
@@ -274,6 +283,11 @@
     animation: breathe 4s ease-in-out infinite;
   }
 
+  .animate-marquee {
+    animation: marquee var(--marquee-duration, 10s) linear infinite;
+    animation-delay: var(--marquee-delay, 2s);
+  }
+
   /* --- Glass Card Utility --- */
 
   .glass-card {
@@ -344,7 +358,8 @@
   .animate-pulse-glow,
   .animate-gradient-shift,
   .animate-vinyl-spin,
-  .animate-breathe {
+  .animate-breathe,
+  .animate-marquee {
     animation: none;
   }
 

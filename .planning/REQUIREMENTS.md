@@ -17,9 +17,9 @@
 
 - [x] **AMBR-01**: A Next.js API route proxies album art images to bypass iTunes CDN CORS restrictions
 - [x] **AMBR-02**: A color extraction utility extracts the dominant color from album art and returns HSL values
-- [ ] **AMBR-03**: A full-viewport ambient background component renders blurred radial gradients based on the currently playing song's dominant color
-- [ ] **AMBR-04**: Ambient background smoothly transitions colors when the song changes (CSS transition, 1-2s)
-- [ ] **AMBR-05**: Ambient background works in both dark and light mode with appropriate opacity levels
+- [x] **AMBR-03**: A full-viewport ambient background component renders blurred radial gradients based on the currently playing song's dominant color
+- [x] **AMBR-04**: Ambient background smoothly transitions colors when the song changes (CSS transition, 1-2s)
+- [x] **AMBR-05**: Ambient background works in both dark and light mode with appropriate opacity levels
 
 ### Player Bar
 
@@ -102,9 +102,9 @@
 | DSGN-05 | Phase 6 | Complete |
 | AMBR-01 | Phase 7 | Complete |
 | AMBR-02 | Phase 7 | Complete |
-| AMBR-03 | Phase 7 | Pending |
-| AMBR-04 | Phase 7 | Pending |
-| AMBR-05 | Phase 7 | Pending |
+| AMBR-03 | Phase 7 | Complete |
+| AMBR-04 | Phase 7 | Complete |
+| AMBR-05 | Phase 7 | Complete |
 | PLYR-01 | Phase 8 | Pending |
 | PLYR-02 | Phase 8 | Pending |
 | PLYR-03 | Phase 8 | Pending |

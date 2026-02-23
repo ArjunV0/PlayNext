@@ -5,16 +5,16 @@
 See: .planning/PROJECT.md (updated 2026-02-23)
 
 **Core value:** Users can discover, search, and play music seamlessly -- playback never interrupts navigation, and playlists let users organize their favorite tracks.
-**Current focus:** Milestone v1.1 UI Upgrade -- Phase 7: Ambient Color System
+**Current focus:** Milestone v1.1 UI Upgrade -- Phase 8: Player Bar Enhancement
 
 ## Current Position
 
-Phase: 7 of 11 (Ambient Color System)
-Plan: 1 of 2 in current phase
-Status: In Progress — Plan 01 complete, Plan 02 remaining
-Last activity: 2026-02-23 -- Completed 07-01-PLAN.md (image proxy + color extractor)
+Phase: 8 of 11 (Player Bar Enhancement)
+Plan: 1 of N in current phase
+Status: Phase 7 complete — ready to begin Phase 8
+Last activity: 2026-02-23 -- Completed 07-02-PLAN.md (AmbientBackground component + layout integration)
 
-Progress: [████░░░░░░░░░░░░░░░░░░] 14% (6/11 phases complete — Plan 01 of Phase 7 done)
+Progress: [█████░░░░░░░░░░░░░░░░░] 18% (7/11 phases complete — Phase 7 Ambient Color System done)
 
 ## Performance Metrics
 
@@ -29,6 +29,7 @@ Progress: [████░░░░░░░░░░░░░░░░░░] 1
 | 07-01 | 8m | 2 | 5 |
 
 *Updated after each plan completion*
+| 07-02 | 2min | 2 | 3 |
 
 ## Accumulated Context
 
@@ -49,6 +50,9 @@ Recent decisions affecting current work:
 - [Phase 07-ambient-color-system]: Image proxy validates URL hostname must end with .mzstatic.com — rejects arbitrary URLs for security
 - [Phase 07-ambient-color-system]: extractColor uses weighted palette average (saturation as weight) with HSL clamping L:25-65%, S floor:30%
 - [Phase 07-ambient-color-system]: Silent fallback pattern: extraction errors return FALLBACK_HSL { h:271, s:81, l:56 } without throwing
+- [Phase 07]: AmbientBackground uses isMounted guard + ssr:false dynamic import for double React 19 hydration protection
+- [Phase 07]: latestUrlRef queue-and-settle: async extractColor result only applied if URL hasn't changed since dispatch
+- [Phase 07]: CSS custom properties written to document.documentElement so downstream phases need no React context coupling
 
 ### Pending Todos
 
@@ -63,5 +67,5 @@ None yet.
 ## Session Continuity
 
 Last session: 2026-02-23
-Stopped at: Completed 07-01-PLAN.md
-Resume file: .planning/phases/07-ambient-color-system/07-02-PLAN.md
+Stopped at: Completed 07-02-PLAN.md
+Resume file: .planning/phases/08-player-bar-enhancement/ (next phase)

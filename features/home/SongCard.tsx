@@ -8,10 +8,11 @@ import { useToast } from "features/toast"
 
 interface SongCardProps {
   song: Song
+  index: number
   onClick: (song: Song) => void
 }
 
-export function SongCard({ song, onClick }: SongCardProps) {
+export function SongCard({ song, index, onClick }: SongCardProps) {
   const { currentSong, isPlaying, addToQueue } = usePlayer()
   const { showToast } = useToast()
   const isActive = currentSong?.id === song.id
@@ -26,31 +27,47 @@ export function SongCard({ song, onClick }: SongCardProps) {
   return (
     <button
       onClick={() => onClick(song)}
-      className={`group w-full rounded-xl p-2 text-left transition-all duration-300 hover:scale-[1.03] hover:shadow-xl sm:p-3 ${
+      className={`group animate-stagger-fade-in w-full rounded-xl p-2 text-left opacity-0 transition-all duration-300 hover:scale-[1.03] hover:[box-shadow:var(--card-glow)] sm:p-3 ${
         isActive
-          ? "bg-white shadow-lg ring-1 ring-blue-500/30 dark:bg-gray-800 dark:ring-violet-500/30"
-          : "bg-gray-50/80 hover:bg-white hover:ring-1 hover:ring-blue-500/20 dark:bg-gray-800/80 dark:hover:bg-gray-800 dark:hover:shadow-violet-500/5 dark:hover:ring-violet-500/20"
+          ? "bg-white shadow-lg dark:bg-gray-800"
+          : "bg-gray-50/80 hover:bg-white dark:bg-gray-800/80 dark:hover:bg-gray-800"
       }`}
+      style={
+        {
+          animationDelay: `${Math.min(index, 7) * 100}ms`,
+          "--card-glow": `0 0 20px hsla(var(--ambient-h, 271), var(--ambient-s, 81%), var(--ambient-l, 56%), 0.25)`,
+          boxShadow: isActive
+            ? `0 0 20px hsla(var(--ambient-h, 271), var(--ambient-s, 81%), var(--ambient-l, 56%), 0.35)`
+            : undefined,
+        } as React.CSSProperties
+      }
     >
       <div className="relative aspect-square w-full overflow-hidden rounded-lg bg-gray-200 dark:bg-gray-700">
         <img
           src={song.coverUrl}
           alt={song.title}
-          className="size-full object-cover transition-transform duration-500 group-hover:scale-105"
+          className="size-full object-cover transition-transform duration-300 group-hover:scale-110"
           loading="lazy"
         />
-        <div
-          className={`absolute inset-0 flex items-center justify-center transition-all duration-300 ${
-            isActive ? "bg-black/30" : "bg-black/0 group-hover:bg-black/30"
-          }`}
-        >
+        {/* Always-visible gradient overlay */}
+        <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/20 to-transparent transition-opacity duration-200" />
+        {/* Controls layer */}
+        <div className="absolute inset-0 flex items-center justify-center">
           <div className="flex items-center gap-2">
             <div
-              className={`group/play relative flex size-12 items-center justify-center rounded-full backdrop-blur-md transition-all duration-300 hover:bg-white/30 ${
+              className={`group/play relative flex size-12 items-center justify-center rounded-full backdrop-blur-md transition-all duration-300 ${
                 isActive
-                  ? "scale-100 bg-white/30 opacity-100"
-                  : "scale-75 bg-white/20 opacity-0 group-hover:scale-100 group-hover:opacity-100"
+                  ? `scale-100 opacity-100 ${isPlaying ? "animate-pulse-glow" : ""}`
+                  : "scale-75 bg-white/20 opacity-0 group-hover:scale-100 group-hover:opacity-100 hover:bg-white/30"
               }`}
+              style={
+                isActive
+                  ? ({
+                      background: `linear-gradient(135deg, hsl(var(--ambient-h, 271), var(--ambient-s, 81%), var(--ambient-l, 56%)), hsl(calc(var(--ambient-h, 271) + 30), var(--ambient-s, 81%), calc(var(--ambient-l, 56%) - 5%)))`,
+                      "--glow-color": `hsla(var(--ambient-h, 271), var(--ambient-s, 81%), var(--ambient-l, 56%), 0.4)`,
+                    } as React.CSSProperties)
+                  : undefined
+              }
             >
               {showPause ? (
                 <svg className="size-6 text-white drop-shadow-lg" fill="currentColor" viewBox="0 0 24 24">

@@ -1,8 +1,7 @@
+import * as RadixTooltip from "@radix-ui/react-tooltip"
 import type { Metadata } from "next"
 import { Inter } from "next/font/google"
 import "styles/tailwind.css"
-
-import * as RadixTooltip from "@radix-ui/react-tooltip"
 
 import { AuthProvider } from "features/auth"
 import { PlayerProvider } from "features/player/PlayerContext"

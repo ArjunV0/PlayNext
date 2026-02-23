@@ -173,9 +173,7 @@ export function PlayerProvider({ children }: { children: React.ReactNode }) {
       const songIndex = contextSongs.findIndex((s) => s.id === song.id)
       // Store the full ordered list (shuffle applies to the full set)
       const ordered = isShuffleRef.current ? shuffleArray(contextSongs) : contextSongs
-      const playIndex = isShuffleRef.current
-        ? ordered.findIndex((s) => s.id === song.id)
-        : Math.max(0, songIndex)
+      const playIndex = isShuffleRef.current ? ordered.findIndex((s) => s.id === song.id) : Math.max(0, songIndex)
       contextSourceRef.current = contextSongs
       contextQueueRef.current = ordered
       contextIndexRef.current = playIndex

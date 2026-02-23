@@ -54,7 +54,7 @@ export function AmbientBackground() {
   return (
     <div
       aria-hidden="true"
-      className={`fixed inset-0 -z-10 pointer-events-none animate-breathe ${
+      className={`animate-breathe pointer-events-none fixed inset-0 -z-10 ${
         isPaused ? "opacity-[0.08] dark:opacity-[0.12]" : "opacity-[0.12] dark:opacity-[0.20]"
       }`}
       style={{
